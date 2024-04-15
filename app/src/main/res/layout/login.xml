@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
+
+    <TextView
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop = "50dp"
+        android:layout_marginBottom="150dp"
+        android:gravity="center_vertical"
+        android:text="  Logare"
+        android:textColor="@color/a765d67"
+        android:textSize="30dp"
+        android:textStyle="bold|italic" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="  E-mail utilizator:"
+        android:textColorHint="@color/a1b0c1a"
+        android:textSize="25dp"
+        android:textStyle="italic"
+        android:background="@drawable/rounded_corners_background"
+        android:id="@+id/userEmail"
+        android:layout_below="@id/login"
+        android:layout_margin="10dp"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="  Parola:"
+        android:textColorHint="@color/a1b0c1a"
+        android:textSize="25dp"
+        android:inputType="textPassword"
+        android:textStyle="italic"
+        android:background="@drawable/rounded_corners_background"
+        android:id="@+id/password"
+        android:layout_below="@id/userEmail"
+        android:layout_margin="10dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logheaza-te"
+        android:textSize="25dp"
+        android:textStyle="italic"
+        android:textColor="@color/a765d67"
+        android:backgroundTint="@color/a2d222f"
+        android:id="@+id/loginBtn"
+        android:layout_below="@id/password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forgotpassword"
+        android:layout_below="@id/loginBtn"
+        android:text="Ai uitat parola?"
+        android:textSize="25dp"
+        android:textColor="@color/a1b0c1a"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"/>
+</RelativeLayout>
