@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop = "50dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="110dp"
         android:gravity="center_vertical"
         android:text="  Inregistrare profesor"
         android:textColor="@color/a765d67"
@@ -18,10 +18,10 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Nume:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/lastname"
@@ -30,10 +30,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Prenume:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/firstname"
@@ -42,10 +42,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  E-mail:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/email"
@@ -55,11 +55,11 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Parola:"
         android:textColorHint="@color/a1b0c1a"
         android:inputType="textPassword"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/password"
@@ -68,10 +68,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Confirmare parola:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/confirmPassword"

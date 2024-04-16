@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop = "50dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center_vertical"
         android:text="  Inregistrare student"
         android:textColor="@color/a765d67"
@@ -18,10 +18,10 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Nume:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/lastname"
@@ -30,10 +30,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Prenume:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/firstname"
@@ -42,10 +42,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  E-mail:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/email"
@@ -54,10 +54,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Numar matricol:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/studIDNum"
@@ -66,10 +66,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  An:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:inputType="number"
         android:digits="0123456789"
         android:textStyle="italic"
@@ -80,10 +80,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Grupa:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/group"
@@ -92,11 +92,11 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Parola:"
         android:textColorHint="@color/a1b0c1a"
         android:inputType="textPassword"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/password"
@@ -105,10 +105,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Confirmare parola:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/confirmPassword"
@@ -127,5 +127,5 @@
         android:id="@+id/createStudAccBtn"
         android:layout_below="@id/confirmPassword"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"/>
+        />
 </RelativeLayout>

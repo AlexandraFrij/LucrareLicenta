@@ -18,10 +18,10 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  E-mail utilizator:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/userEmail"
@@ -30,10 +30,10 @@
         />
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="  Parola:"
         android:textColorHint="@color/a1b0c1a"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:inputType="textPassword"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
