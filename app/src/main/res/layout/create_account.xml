@@ -21,6 +21,7 @@
         android:text="creeaza cont profesor"
         android:textSize="25dp"
         android:textStyle="italic"
+        android:layout_marginTop="50dp"
         android:textColor="@color/a765d67"
         android:backgroundTint="@color/a2d222f"
         android:id="@+id/createProfAccBtn"

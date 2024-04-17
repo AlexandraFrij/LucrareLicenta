@@ -60,6 +60,7 @@
         android:id="@+id/forgotpassword"
         android:layout_below="@id/loginBtn"
         android:text="Ai uitat parola?"
+        android:textStyle="italic"
         android:textSize="25dp"
         android:textColor="@color/a1b0c1a"
         android:layout_centerHorizontal="true"
