@@ -1,0 +1,14 @@
+<resources>
+    <style name="CalendarDateText">
+        <item name="android:textColor">#1b0c1a</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CalendarWeekDayText">
+        <item name="android:textColor">#340222</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+</resources>
