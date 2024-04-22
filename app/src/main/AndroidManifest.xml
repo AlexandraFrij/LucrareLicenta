@@ -13,14 +13,24 @@
         android:theme="@style/Theme.Licenta"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".SignInPage"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    <activity android:name=".CreateAccountPage" android:exported="true" />
+    <activity android:name=".LoginPage" android:exported="true" />
+    <activity android:name=".ChatPage" android:exported="true"/>
+    <activity android:name=".ConversationsPage" android:exported="true" />
+    <activity android:name=".CreateProfAccount" android:exported="true" />
+    <activity android:name=".CreateStudentAccount" android:exported="true"/>
+    <activity android:name=".EditProfilePage" android:exported="true" />
+    <activity android:name=".HomePage" android:exported="true" />
+    <activity android:name=".NotificationsPage" android:exported="true"/>
+    <activity android:name=".ProfilePage" android:exported="true"/>
+
     </application>
-
-</manifest>
+    </manifest>
