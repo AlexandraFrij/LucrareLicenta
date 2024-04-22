@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient_background"
+    android:id="@+id/createAccountPage"
+    tools:context=".CreateAccountPage">
 
     <TextView
-        android:id="@+id/welcome"
+        android:id="@+id/createAccount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="100dp"
         android:gravity="center_horizontal"
-        android:text="Bun venit!"
+        android:text="Creeaza cont"
         android:textColor="@color/a765d67"
         android:textSize="30dp"
         android:textStyle="bold|italic"/>
@@ -18,13 +21,14 @@
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="creeaza cont"
+        android:text="creeaza cont profesor"
         android:textSize="25dp"
         android:textStyle="italic"
+        android:layout_marginTop="50dp"
         android:textColor="@color/a765d67"
         android:backgroundTint="@color/a2d222f"
-        android:id="@+id/createAccountBtn"
-        android:layout_below="@id/welcome"
+        android:id="@+id/createProfAccBtn"
+        android:layout_below="@id/createAccount"
         android:layout_centerHorizontal="true"/>
     <TextView
         android:id="@+id/or"
@@ -32,19 +36,19 @@
         android:layout_height="wrap_content"
         android:text="SAU"
         android:textColor="@color/a765d67"
-        android:layout_below="@id/createAccountBtn"
+        android:layout_below="@id/createProfAccBtn"
         android:textSize="30dp"
         android:textStyle="italic"
         android:layout_centerHorizontal="true"/>
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="logheaza-te"
+        android:text="creeaza cont student"
         android:textSize="25dp"
         android:textStyle="italic"
         android:textColor="@color/a765d67"
         android:backgroundTint="@color/a2d222f"
-        android:id="@+id/loginBtn"
+        android:id="@+id/createStudAccBtn"
         android:layout_below="@id/or"
         android:layout_centerHorizontal="true"/>
 

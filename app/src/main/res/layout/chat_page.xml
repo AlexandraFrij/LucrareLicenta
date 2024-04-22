@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_background"
-    android:id="@+id/conversationsPage">
+    android:id="@+id/chatPage"
+    tools:context=".ChatPage">
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="48dp"
@@ -23,7 +25,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="10dp"
         android:id="@+id/profilePhoto"
-        android:src="@drawable/profilePic"
+        android:src="@drawable/profile_pic"
         />
 
     <TextView

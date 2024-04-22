@@ -4,7 +4,10 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_background"
-    android:id="@+id/conversationsPage">
+    android:id="@+id/notificationsPage"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".NotificationsPage"
+    >
 
     <ImageView
         android:id="@+id/notifIcon"

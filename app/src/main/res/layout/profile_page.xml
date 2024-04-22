@@ -4,16 +4,17 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_background"
-    android:id="@+id/profilePage">
+    android:id="@+id/profilePage"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ProfilePage">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="250dp"
         android:layout_marginTop="50dp"
-        android:src="@drawable/profilePic"
+        android:src="@drawable/profile_pic"
         android:id="@+id/profilePic"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf=""
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView

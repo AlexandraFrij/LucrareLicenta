@@ -2,10 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient_background"
+    android:id="@+id/login"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".LoginPage">
 
     <TextView
-        android:id="@+id/login"
+        android:id="@+id/loginText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop = "50dp"
@@ -25,7 +28,7 @@
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/userEmail"
-        android:layout_below="@id/login"
+        android:layout_below="@id/loginText"
         android:layout_margin="10dp"
         />
     <EditText
@@ -54,7 +57,7 @@
         android:layout_below="@id/password"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"/>
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/forgotpassword"
@@ -64,5 +67,6 @@
         android:textSize="25dp"
         android:textColor="@color/a1b0c1a"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"/>
+        android:layout_margin="20dp"
+        android:background="@android:color/transparent"/>
 </RelativeLayout>
