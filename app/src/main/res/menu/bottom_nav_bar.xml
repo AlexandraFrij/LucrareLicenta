@@ -2,11 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:title="Notificari"
-        android:icon="@drawable/baseline_notifications_24" />
+        android:icon="@drawable/baseline_notifications_24"
+        android:id="@+id/notificationsBtn"/>
     <item
         android:title="Acasa"
-        android:icon="@drawable/baseline_home_24" />
+        android:icon="@drawable/baseline_home_24"
+        android:id="@+id/homeBtn"/>
     <item
         android:title="Mesaje"
-        android:icon="@drawable/round_chat_bubble_24" />
+        android:icon="@drawable/round_chat_bubble_24"
+        android:id="@+id/messagesBtn"/>
 </menu>
