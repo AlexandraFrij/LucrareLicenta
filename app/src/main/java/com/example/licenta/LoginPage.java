@@ -25,7 +25,7 @@ public class LoginPage extends AppCompatActivity {
                 else
                 if (v.getId() == R.id.forgotpassword)
                 {
-                    Intent loginIntent = new Intent(LoginPage.this, LoginPage.class);
+                    Intent loginIntent = new Intent(LoginPage.this, ForgotPasswordPage.class);
                     startActivity(loginIntent);
                 }
                 else

@@ -3,6 +3,9 @@ package com.example.licenta;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,6 +26,14 @@ public class HomePage extends AppCompatActivity {
         });
 
         bottomNavBar.setSelectedItemId(R.id.homeBtn);
+        ImageView imageView = findViewById(R.id.profileImage);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent createAccountIntent = new Intent(HomePage.this, ProfilePage.class);
+                startActivity(createAccountIntent);
+            }
+        });
     }
     protected boolean onNavigationItemSelectedHandler(MenuItem item) {
         if (item.getItemId() == R.id.homeBtn) {

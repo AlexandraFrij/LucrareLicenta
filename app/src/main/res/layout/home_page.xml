@@ -8,6 +8,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".HomePage">
 
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/profileImage"
+        android:src="@drawable/outline_account_circle_24"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        />
     <CalendarView
         android:layout_width="match_parent"
         android:layout_height="400dp"

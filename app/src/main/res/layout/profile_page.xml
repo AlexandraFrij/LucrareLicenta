@@ -80,18 +80,19 @@
         android:drawableTint="@color/a1b0c1a"
         android:background="@drawable/rounded_buttons"
         />
-
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="match_parent"
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/bottom_nav_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_bar"
-        app:itemIconTint="@color/fadcd5"
-        app:itemTextColor="@color/fadcd5"
-        android:background="@drawable/gradient_background_menu"
+        android:id="@+id/goBackBtn"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@+id/editProfileBtn"
+        app:layout_constraintEnd_toEndOf="@+id/editProfileBtn"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileBtn"
+        android:text="Intoarcere acasa"
+        android:textColor="@color/a1b0c1a"
+        android:drawableTint="@color/a1b0c1a"
+        android:background="@drawable/rounded_buttons"
         />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

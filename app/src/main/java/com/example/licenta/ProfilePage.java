@@ -14,28 +14,33 @@ public class ProfilePage extends AppCompatActivity {
         setContentView(R.layout.profile_page);
         Button logoffBtn = findViewById(R.id.logoffBtn);
         Button editProfileBtn = findViewById(R.id.editProfileBtn);
-        View.OnClickListener buttonClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.logoffBtn)
-                {
-                    Intent createAccountIntent = new Intent(ProfilePage.this, SignInPage.class);
-                    startActivity(createAccountIntent);
-                }
-                else
-                if (v.getId() == R.id.editProfileBtn)
-                {
-                    Intent loginIntent = new Intent(ProfilePage.this, EditProfilePage.class);
-                    startActivity(loginIntent);
-                }
-                else
-                {
-                    throw new IllegalArgumentException("Buton necunoscut");
-                }
+        Button goBackBtn = findViewById(R.id.goBackBtn);
+        View.OnClickListener buttonClickListener = v -> {
+            if (v.getId() == R.id.logoffBtn)
+            {
+                Intent createAccountIntent = new Intent(ProfilePage.this, SignInPage.class);
+                startActivity(createAccountIntent);
+            }
+            else
+            if (v.getId() == R.id.editProfileBtn)
+            {
+                Intent loginIntent = new Intent(ProfilePage.this, EditProfilePage.class);
+                startActivity(loginIntent);
+            }
+            else
+            if (v.getId() == R.id.goBackBtn)
+            {
+                Intent loginIntent = new Intent(ProfilePage.this, HomePage.class);
+                startActivity(loginIntent);
+            }
+            else
+            {
+                throw new IllegalArgumentException("Unknown button");
             }
         };
 
         logoffBtn.setOnClickListener(buttonClickListener);
         editProfileBtn.setOnClickListener(buttonClickListener);
+        goBackBtn.setOnClickListener(buttonClickListener);
     }
 }
