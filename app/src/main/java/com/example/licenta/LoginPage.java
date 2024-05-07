@@ -19,18 +19,18 @@ public class LoginPage extends AppCompatActivity {
             public void onClick(View v) {
                 if (v.getId() == R.id.loginBtn)
                 {
-                    Intent createAccountIntent = new Intent(LoginPage.this, HomePage.class);
-                    startActivity(createAccountIntent);
+                    Intent home = new Intent(LoginPage.this, HomePage.class);
+                    startActivity(home);
                 }
                 else
                 if (v.getId() == R.id.forgotpassword)
                 {
-                    Intent loginIntent = new Intent(LoginPage.this, ForgotPasswordPage.class);
-                    startActivity(loginIntent);
+                    Intent forgotPassword = new Intent(LoginPage.this, ForgotPasswordPage.class);
+                    startActivity(forgotPassword);
                 }
                 else
                 {
-                    throw new IllegalArgumentException("Buton necunoscut");
+                    throw new IllegalArgumentException("Unknown button");
                 }
             }
         };

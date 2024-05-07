@@ -19,18 +19,18 @@ public class EditProfilePage extends AppCompatActivity {
             public void onClick(View v) {
                 if (v.getId() == R.id.saveBtn)
                 {
-                    Intent createAccountIntent = new Intent(EditProfilePage.this, EditProfilePage.class);
-                    startActivity(createAccountIntent);
+                    Intent edit = new Intent(EditProfilePage.this, EditProfilePage.class);
+                    startActivity(edit);
                 }
                 else
                 if (v.getId() == R.id.leaveBtn)
                 {
-                    Intent loginIntent = new Intent(EditProfilePage.this, ProfilePage.class);
-                    startActivity(loginIntent);
+                    Intent profile = new Intent(EditProfilePage.this, ProfilePage.class);
+                    startActivity(profile);
                 }
                 else
                 {
-                    throw new IllegalArgumentException("Buton necunoscut");
+                    throw new IllegalArgumentException("Unknown button");
                 }
             }
         };

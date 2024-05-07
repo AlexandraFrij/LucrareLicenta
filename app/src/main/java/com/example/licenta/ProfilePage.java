@@ -18,20 +18,20 @@ public class ProfilePage extends AppCompatActivity {
         View.OnClickListener buttonClickListener = v -> {
             if (v.getId() == R.id.logoffBtn)
             {
-                Intent createAccountIntent = new Intent(ProfilePage.this, SignInPage.class);
-                startActivity(createAccountIntent);
+                Intent signin = new Intent(ProfilePage.this, SignInPage.class);
+                startActivity(signin);
             }
             else
             if (v.getId() == R.id.editProfileBtn)
             {
-                Intent loginIntent = new Intent(ProfilePage.this, EditProfilePage.class);
-                startActivity(loginIntent);
+                Intent edit = new Intent(ProfilePage.this, EditProfilePage.class);
+                startActivity(edit);
             }
             else
             if (v.getId() == R.id.goBackBtn)
             {
-                Intent loginIntent = new Intent(ProfilePage.this, HomePage.class);
-                startActivity(loginIntent);
+                Intent home = new Intent(ProfilePage.this, HomePage.class);
+                startActivity(home);
             }
             else
             {

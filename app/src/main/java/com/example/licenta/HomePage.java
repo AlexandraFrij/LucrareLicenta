@@ -30,8 +30,8 @@ public class HomePage extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent createAccountIntent = new Intent(HomePage.this, ProfilePage.class);
-                startActivity(createAccountIntent);
+                Intent profile = new Intent(HomePage.this, ProfilePage.class);
+                startActivity(profile);
             }
         });
     }

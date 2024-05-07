@@ -30,7 +30,7 @@ public class SignInPage extends AppCompatActivity {
                 }
                     else
                     {
-                    throw new IllegalArgumentException("Buton necunoscut");
+                    throw new IllegalArgumentException("Unknown button");
                 }
             }
         };

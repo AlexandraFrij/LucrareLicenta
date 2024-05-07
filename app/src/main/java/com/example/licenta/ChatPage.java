@@ -18,12 +18,12 @@ public class ChatPage extends AppCompatActivity {
             public void onClick(View v) {
                 if (v.getId() == R.id.goBackBtn)
                 {
-                    Intent createAccountIntent = new Intent(ChatPage.this, ConversationsPage.class);
-                    startActivity(createAccountIntent);
+                    Intent conversation = new Intent(ChatPage.this, ConversationsPage.class);
+                    startActivity(conversation);
                 }
                 else
                 {
-                    throw new IllegalArgumentException("Buton necunoscut");
+                    throw new IllegalArgumentException("Unknown button");
                 }
             }
         };

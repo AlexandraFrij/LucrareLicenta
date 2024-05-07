@@ -73,8 +73,6 @@
         android:hint="  An:"
         android:textColorHint="@color/a1b0c1a"
         android:textSize="20dp"
-        android:inputType="number"
-        android:digits="0123456789"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/year"

@@ -21,18 +21,18 @@ public class CreateAccountPage extends AppCompatActivity {
             public void onClick(View v) {
                 if (v.getId() == R.id.createProfAccBtn)
                 {
-                    Intent createAccountIntent = new Intent(CreateAccountPage.this, CreateProfAccount.class);
-                    startActivity(createAccountIntent);
+                    Intent createProfAccountIntent = new Intent(CreateAccountPage.this, CreateProfAccount.class);
+                    startActivity(createProfAccountIntent);
                 }
                 else
                 if (v.getId() == R.id.createStudAccBtn)
                 {
-                    Intent loginIntent = new Intent(CreateAccountPage.this, CreateStudentAccount.class);
-                    startActivity(loginIntent);
+                    Intent createStudAccountIntent = new Intent(CreateAccountPage.this, CreateStudentAccount.class);
+                    startActivity(createStudAccountIntent);
                 }
                 else
                 {
-                    throw new IllegalArgumentException("Buton necunoscut");
+                    throw new IllegalArgumentException("Unknown button");
                 }
             }
         };
