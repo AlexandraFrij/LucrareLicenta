@@ -6,20 +6,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import java.sql.SQLException;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.regex.Pattern;
 import android.widget.Toast;
 
-public class CreateStudentAccount extends AppCompatActivity {
+public class CreateStudentAccount extends AppCompatActivity
+{
 
     private DatabaseHelper dbHelper;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         dbHelper = new DatabaseHelper(this);
 
         super.onCreate(savedInstanceState);
@@ -48,12 +48,9 @@ public class CreateStudentAccount extends AppCompatActivity {
             String passwordConfirmation = editTextConfirmPassword.getText().toString().trim();
 
             String message;
-            try {
-                message = verifyData(lastName, firstName, email, idNumber, year, group, password, passwordConfirmation);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            if (!message.equals("ok")) {
+            message = verifyData(lastName, firstName, email, idNumber, year, group, password, passwordConfirmation);
+            if (!message.equals("ok"))
+            {
                 Toast.makeText(CreateStudentAccount.this, message, Toast.LENGTH_SHORT).show();
             } else {
                 insertData(lastName, firstName, email, idNumber, year, group, password);
@@ -64,7 +61,8 @@ public class CreateStudentAccount extends AppCompatActivity {
 
     }
 
-    public String verifyData(String lastName, String firstName, String email, String idNumber, String year, String group, String pass1, String pass2) throws SQLException {
+    public String verifyData(String lastName, String firstName, String email, String idNumber, String year, String group, String pass1, String pass2)
+    {
         String s = verifyName(lastName, firstName);
         if (!s.equals("ok"))
             return s;
@@ -83,7 +81,8 @@ public class CreateStudentAccount extends AppCompatActivity {
         return "ok";
     }
 
-    public String verifyPassword(String password, String passwordConf) {
+    public String verifyPassword(String password, String passwordConf)
+    {
         if (!password.equals(passwordConf))
             return "Parola reintrodusa este gresita!";
         String regex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*()_+=-]).{8,}$";
@@ -93,7 +92,8 @@ public class CreateStudentAccount extends AppCompatActivity {
         return "ok";
     }
 
-    public String verifyName(String lastName, String firstName) {
+    public String verifyName(String lastName, String firstName)
+    {
         String regex = "^[A-Z][a-z]*(?:-[A-Z][a-z]*)*$";
         Pattern pattern = Pattern.compile(regex);
         if (!pattern.matcher(lastName).matches())
@@ -103,7 +103,8 @@ public class CreateStudentAccount extends AppCompatActivity {
         return "ok";
     }
 
-    public String verifyEmail(String email) throws SQLException {
+    public String verifyEmail(String email)
+    {
         if (emailExists(email))
             return "E-mail aflat in folosinta!";
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -113,7 +114,8 @@ public class CreateStudentAccount extends AppCompatActivity {
         return "ok";
     }
 
-    public String verifyIdNumber(String idNumber) throws SQLException {
+    public String verifyIdNumber(String idNumber)
+    {
         if (idNumberExists(idNumber))
             return "Numar matricol aflat in folosinta!";
         String regex = "^310910401(RSL|ESL)\\d{6}$";
@@ -123,7 +125,8 @@ public class CreateStudentAccount extends AppCompatActivity {
         return "ok";
     }
 
-    public String verifyYearAndGroup(String year, String group) {
+    public String verifyYearAndGroup(String year, String group)
+    {
         String regex1 = "^(L[1-3]|M[1-2])$";
         String regex2 = "^(A[1-9]|B[1-9]|E[1-9])$";
         Pattern pattern1 = Pattern.compile(regex1);
@@ -135,45 +138,63 @@ public class CreateStudentAccount extends AppCompatActivity {
         return "ok";
     }
 
-    public boolean emailExists(String email) {
+    public boolean emailExists(String email)
+    {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        try {
-            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM STUDENT_DATA WHERE email = ?", new String[]{email});
-            if (cursor.moveToFirst()) {
-                int count = cursor.getInt(0);
-                return count > 0;
+        try
+        {
+            String query = "SELECT last_name FROM STUDENT_DATA WHERE email = ? " +
+                    "UNION " +
+                    "SELECT last_name FROM PROF_DATA WHERE email = ?";
+            Cursor cursor = db.rawQuery(query, new String[]{email, email});
+            if (cursor.moveToFirst())
+            {
+                return true;
             }
+
+
             return false;
-        } finally {
+        }
+        finally
+        {
             db.close();
         }
     }
 
-    public boolean idNumberExists(String idNumber) {
+    public boolean idNumberExists(String idNumber)
+    {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        try {
+        try
+        {
             Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM STUDENT_DATA WHERE id_number = ?", new String[]{idNumber});
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToFirst())
+            {
                 int count = cursor.getInt(0);
                 return count > 0;
             }
             return false;
-        } finally {
+        }
+        finally
+        {
             db.close();
         }
     }
 
-    public void insertData(String lastName, String firstName, String email, String idNumber, String year, String group, String password) {
+    public void insertData(String lastName, String firstName, String email, String idNumber, String year, String group, String password)
+    {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        try {
+        try
+        {
             db.execSQL(
                     "INSERT INTO STUDENT_DATA (last_name, first_name, email, id_number, year, class, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     new Object[]{lastName, firstName, email, idNumber, year, group, password}
             );
-        } finally {
+        }
+        finally
+        {
             db.close();
         }
     }

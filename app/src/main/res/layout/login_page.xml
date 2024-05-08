@@ -27,7 +27,7 @@
         android:textSize="20dp"
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
-        android:id="@+id/userEmail"
+        android:id="@+id/email"
         android:layout_below="@id/loginText"
         android:layout_margin="10dp"
         />
@@ -41,7 +41,7 @@
         android:textStyle="italic"
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/password"
-        android:layout_below="@id/userEmail"
+        android:layout_below="@id/email"
         android:layout_margin="10dp"
         />
 
