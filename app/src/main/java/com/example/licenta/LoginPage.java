@@ -1,6 +1,8 @@
 package com.example.licenta;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.regex.Pattern;
 
 public class LoginPage extends AppCompatActivity {
 
@@ -20,6 +21,7 @@ public class LoginPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new DatabaseHelper(this);
+        SharedPreferences sp = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
@@ -45,6 +47,10 @@ public class LoginPage extends AppCompatActivity {
                         Toast.makeText(LoginPage.this, message, Toast.LENGTH_SHORT).show();
                     else
                     {
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("email", email);
+                        editor.commit();
+
                         Intent home = new Intent(LoginPage.this, HomePage.class);
                         startActivity(home);
                     }
@@ -95,7 +101,7 @@ public class LoginPage extends AppCompatActivity {
     public String rightPasswordWasIntroduced(String pass1, String pass2)
     {
         if(pass1 == null)
-            return "Adresa de e-mail incorecta!";
+            return "Adresa de e-mail nu exista!";
         if(! pass1.equals(pass2))
             return "Parola incorecta!";
         return "ok";
