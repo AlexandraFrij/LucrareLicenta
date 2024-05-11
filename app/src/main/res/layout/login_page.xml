@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
@@ -43,6 +44,17 @@
         android:id="@+id/password"
         android:layout_below="@id/email"
         android:layout_margin="10dp"
+        />
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/seePassword"
+        android:layout_toEndOf="@id/password"
+        android:layout_alignTop="@id/password"
+        android:drawableTint="@color/a1b0c1a"
+        android:layout_marginLeft="-70dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
         />
 
     <com.google.android.material.button.MaterialButton

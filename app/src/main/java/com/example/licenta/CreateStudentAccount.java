@@ -53,7 +53,7 @@ public class CreateStudentAccount extends AppCompatActivity
             {
                 Toast.makeText(CreateStudentAccount.this, message, Toast.LENGTH_SHORT).show();
             } else {
-                insertData(lastName, firstName, email, idNumber, year, group, password);
+                dbHelper.insertStudentData(lastName, firstName, email, idNumber, year, group, password);
                 Intent login = new Intent(CreateStudentAccount.this, LoginPage.class);
                 startActivity(login);
             }
@@ -105,8 +105,8 @@ public class CreateStudentAccount extends AppCompatActivity
 
     public String verifyEmail(String email)
     {
-        if (emailExists(email))
-            return "E-mail aflat in folosinta!";
+        if (dbHelper.emailExists(email))
+            return "Adresa de e-mail aflata in folosinta!";
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regex);
         if (!pattern.matcher(email).matches())
@@ -116,7 +116,7 @@ public class CreateStudentAccount extends AppCompatActivity
 
     public String verifyIdNumber(String idNumber)
     {
-        if (idNumberExists(idNumber))
+        if (dbHelper.idNumberExists(idNumber))
             return "Numar matricol aflat in folosinta!";
         String regex = "^310910401(RSL|ESL)\\d{6}$";
         Pattern pattern = Pattern.compile(regex);
@@ -137,66 +137,4 @@ public class CreateStudentAccount extends AppCompatActivity
             return "Grupa invalida!";
         return "ok";
     }
-
-    public boolean emailExists(String email)
-    {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        try
-        {
-            String query = "SELECT last_name FROM STUDENT_DATA WHERE email = ? " +
-                    "UNION " +
-                    "SELECT last_name FROM PROF_DATA WHERE email = ?";
-            Cursor cursor = db.rawQuery(query, new String[]{email, email});
-            if (cursor.moveToFirst())
-            {
-                return true;
-            }
-
-
-            return false;
-        }
-        finally
-        {
-            db.close();
-        }
-    }
-
-    public boolean idNumberExists(String idNumber)
-    {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        try
-        {
-            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM STUDENT_DATA WHERE id_number = ?", new String[]{idNumber});
-            if (cursor.moveToFirst())
-            {
-                int count = cursor.getInt(0);
-                return count > 0;
-            }
-            return false;
-        }
-        finally
-        {
-            db.close();
-        }
-    }
-
-    public void insertData(String lastName, String firstName, String email, String idNumber, String year, String group, String password)
-    {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        try
-        {
-            db.execSQL(
-                    "INSERT INTO STUDENT_DATA (last_name, first_name, email, id_number, year, class, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{lastName, firstName, email, idNumber, year, group, password}
-            );
-        }
-        finally
-        {
-            db.close();
-        }
-    }
-
 }

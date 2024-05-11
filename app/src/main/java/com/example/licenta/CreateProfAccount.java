@@ -48,7 +48,7 @@ public class CreateProfAccount extends AppCompatActivity
                 Toast.makeText(CreateProfAccount.this, message, Toast.LENGTH_SHORT).show();
             } else
             {
-                insertData(lastName, firstName, email, password);
+                dbHelper.insertProfData(lastName, firstName, email, password);
                 Intent login = new Intent(CreateProfAccount.this, LoginPage.class);
                 startActivity(login);
             }
@@ -92,8 +92,8 @@ public class CreateProfAccount extends AppCompatActivity
 
     public String verifyEmail(String email)
     {
-        if (emailExists(email))
-            return "E-mail aflat in folosinta!";
+        if (dbHelper.emailExists(email))
+            return "Adresa de e-mail aflata in folosinta!";
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regex);
         if (!pattern.matcher(email).matches())
@@ -101,47 +101,5 @@ public class CreateProfAccount extends AppCompatActivity
         return "ok";
     }
 
-    public boolean emailExists(String email)
-    {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        try
-        {
-            String query = "SELECT last_name FROM STUDENT_DATA WHERE email = ? " +
-                    "UNION " +
-                    "SELECT last_name FROM PROF_DATA WHERE email = ?";
-
-            Cursor cursor = db.rawQuery(query, new String[]{email, email});
-
-            if (cursor.moveToFirst())
-            {
-                return true;
-            }
-
-            return false;
-        }
-        finally
-        {
-            db.close();
-        }
-    }
-
-
-    public void insertData(String lastName, String firstName, String email, String password)
-    {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        try
-        {
-            db.execSQL(
-                    "INSERT INTO PROF_DATA (last_name, first_name, email, password) VALUES (?, ?, ?, ?)",
-                    new Object[]{lastName, firstName, email, password}
-            );
-        }
-        finally
-        {
-            db.close();
-        }
-    }
 
 }

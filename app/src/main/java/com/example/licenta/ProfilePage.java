@@ -33,7 +33,8 @@ public class ProfilePage extends AppCompatActivity {
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         String email = sp.getString("email", null);
-        String username = retrieveName(email);
+        String[] data = dbHelper.retrieveDataWithEmail(email);
+        String username = data[0] + " " + data[1];
         name.setText(username);
         emailAddress.setText(email);
 
@@ -58,7 +59,7 @@ public class ProfilePage extends AppCompatActivity {
             else
             if (v.getId() == R.id.deleteAccBtn)
             {
-                deleteAccount(email);
+                dbHelper.deleteAccount(email);
                 Toast.makeText(ProfilePage.this, "Cont sters!", Toast.LENGTH_LONG).show();
                 Intent signIn = new Intent(ProfilePage.this, SignInPage.class);
                 startActivity(signIn);
@@ -74,34 +75,4 @@ public class ProfilePage extends AppCompatActivity {
         goBackBtn.setOnClickListener(buttonClickListener);
         deleteAccBtn.setOnClickListener(buttonClickListener);
     }
-
-    public String retrieveName(String email)
-    {
-        String username = "";
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT first_name, last_name FROM STUDENT_DATA WHERE email = ?"+
-                       "UNION " +
-                       "SELECT first_name, last_name FROM PROF_DATA WHERE email = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{email, email});
-
-        if (cursor.moveToFirst()) {
-            String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
-            String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
-            username += firstName;
-            username += " ";
-            username += lastName;
-        }
-
-        cursor.close();
-        return username;
-    }
-    private void deleteAccount(String email)
-    {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String deleteStudent = "DELETE FROM STUDENT_DATA WHERE email = ?";
-        String deleteProf    = "DELETE FROM PROF_DATA WHERE email = ?";
-        db.execSQL(deleteStudent, new String[]{email});
-        db.execSQL(deleteProf, new String[]{email});
-    }
-
 }

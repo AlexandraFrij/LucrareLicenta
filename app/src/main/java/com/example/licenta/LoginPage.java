@@ -6,9 +6,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +34,25 @@ public class LoginPage extends AppCompatActivity {
 
         Button forgotPassBtn = findViewById(R.id.forgotpassword);
         Button loginBtn = findViewById(R.id.loginBtn);
+
+        ImageView seePassword = findViewById(R.id.seePassword);
+        seePassword.setImageResource(R.drawable.see_password);
+        seePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editTextPassword.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance()))
+                {
+                    editTextPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    seePassword.setImageResource(R.drawable.hide_password);
+                }
+                else
+                {
+                    editTextPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    seePassword.setImageResource(R.drawable.see_password);
+                }
+            }
+        });
+
         View.OnClickListener buttonClickListener = new View.OnClickListener()
         {
             @Override
@@ -41,7 +63,7 @@ public class LoginPage extends AppCompatActivity {
                     String email = editTextEmail.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
 
-                    String pass = extractPasswordUsingEmail(email);
+                    String pass = dbHelper.extractPasswordUsingEmail(email);
                     String message = rightPasswordWasIntroduced(pass, password);
                     if (! message.equals("ok"))
                         Toast.makeText(LoginPage.this, message, Toast.LENGTH_SHORT).show();
@@ -72,32 +94,7 @@ public class LoginPage extends AppCompatActivity {
         forgotPassBtn.setOnClickListener(buttonClickListener);
         loginBtn.setOnClickListener(buttonClickListener);
     }
-    public String extractPasswordUsingEmail(String email)
-    {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String password = null;
 
-        try {
-            String query = "SELECT password FROM STUDENT_DATA WHERE email = ? " +
-                    "UNION " +
-                    "SELECT password FROM PROF_DATA WHERE email = ?";
-
-            Cursor cursor = db.rawQuery(query, new String[]{email, email});
-            if (cursor.moveToFirst()) {
-                int columnIndex = cursor.getColumnIndex("password");
-                if (columnIndex >= 0) {
-                    password = cursor.getString(columnIndex);
-                }
-            }
-
-            cursor.close();
-        }
-        finally
-        {
-            db.close();
-        }
-        return password;
-    }
     public String rightPasswordWasIntroduced(String pass1, String pass2)
     {
         if(pass1 == null)
