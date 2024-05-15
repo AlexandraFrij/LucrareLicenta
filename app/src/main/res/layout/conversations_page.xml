@@ -8,12 +8,43 @@
     android:id="@+id/conversationsPage"
     tools:context=".ConversationsPage">
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/message_view"
+        android:text="Mesaje"
+        android:textSize="25dp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/fadcd5"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/search"
+        android:drawableLeft="@drawable/baseline_person_search_24"
+        android:background="@drawable/rounded_corners_background"
+        android:drawableTint="@color/fadcd5"
+        android:text="Cautare utilizator"
+        android:textStyle="italic"
+        android:layout_below="@+id/message_view"
+        android:textColor="@color/white"
+        android:elevation="20dp"
+        android:layout_margin="4dp"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical|start"
+        />
     <ImageView
         android:id="@+id/profilePic"
         android:layout_width="84dp"
         android:layout_height="82dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="50dp"
+        android:layout_below="@id/search"
         android:src="@drawable/profile_pic" />
 
     <TextView

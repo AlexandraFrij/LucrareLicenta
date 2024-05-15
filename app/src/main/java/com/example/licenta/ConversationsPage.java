@@ -7,12 +7,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class ConversationsPage extends AppCompatActivity {
+import android.view.View;
+import android.widget.Button;
+
+public class ConversationsPage extends AppCompatActivity
+{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversations_page);
+
+        Button search = findViewById(R.id.search);
 
         BottomNavigationView bottomNavBar = findViewById(R.id.bottom_nav_bar);
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -23,6 +30,15 @@ public class ConversationsPage extends AppCompatActivity {
         });
 
         bottomNavBar.setSelectedItemId(R.id.messagesBtn);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ConversationsPage.this, SearchUser.class);
+                startActivity(intent);
+
+            }
+        });
     }
     protected boolean onNavigationItemSelectedHandler(MenuItem item) {
         if (item.getItemId() == R.id.homeBtn) {
