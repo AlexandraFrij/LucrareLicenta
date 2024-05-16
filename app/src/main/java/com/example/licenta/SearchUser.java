@@ -7,14 +7,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchUser extends AppCompatActivity
 {
-    protected void onCreate(Bundle savedInstanceState) {
+    private DatabaseHelper dbHelper;
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        dbHelper = new DatabaseHelper(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_user);
@@ -33,13 +41,25 @@ public class SearchUser extends AppCompatActivity
         });
         search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String username = usernameEdit.getText().toString().trim();
-                if (username.length() < 3 || username.isEmpty() )
+            public void onClick(View v)
+            {
+                String usernamePattern = usernameEdit.getText().toString().trim();
+                if (usernamePattern.length() < 3 || usernamePattern.isEmpty() )
                 {
                     usernameEdit.setError("Utilizatorul nu exista");
-                    return;
                 }
+                else
+                {
+                    List<String> usernames = dbHelper.extractUsername(usernamePattern);
+                    List<RecycleViewItem> users = new ArrayList<RecycleViewItem>();
+                    for (int i = 0; i < usernames.size(); i++)
+                    {
+                        users.add(new RecycleViewItem(usernames.get(i), R.drawable.profile_pic));
+                    }
+                    usersView.setLayoutManager(new LinearLayoutManager(SearchUser.this));
+                    usersView.setAdapter(new MyAdapter(getApplicationContext(), users));
+                }
+
 
             }
         });

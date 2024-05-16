@@ -12,9 +12,32 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/profileImage"
-        android:src="@drawable/outline_account_circle_24"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="15dp"
+        android:src="@drawable/profile_pic"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/username"
+        android:layout_toRightOf="@id/profileImage"
+        android:layout_marginTop="17dp"
+        android:text="Username"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:textColor="@color/fadcd5"
+    />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/email"
+        android:layout_toRightOf="@id/profileImage"
+        android:layout_below="@+id/username"
+        android:text="mail@mail.com"
+        android:textSize="13dp"
+        android:textStyle="italic"
+        android:textColor="@color/fadcd5"
         />
     <CalendarView
         android:layout_width="match_parent"

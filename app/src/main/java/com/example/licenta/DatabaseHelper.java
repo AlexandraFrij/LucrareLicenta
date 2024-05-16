@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "licenta.db";
     private static final int DATABASE_VERSION = 4;
@@ -27,24 +30,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "password TEXT" +
             ")";
 
-    public DatabaseHelper(Context context) {
+    public DatabaseHelper(Context context)
+    {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(SQLiteDatabase db)
+    {
         db.execSQL(CREATE_TABLE_STUDENT_DATA);
         db.execSQL(CREATE_TABLE_PROF_DATA);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
         db.execSQL("DROP TABLE IF EXISTS STUDENT_DATA");
         db.execSQL("DROP TABLE IF EXISTS PROF_DATA");
         onCreate(db);
     }
 
-    public void updateLastname(String lastname, String email) {
+    public void updateLastname(String lastname, String email)
+    {
         SQLiteDatabase db = this.getWritableDatabase();
         String updateStudentsData = "UPDATE STUDENT_DATA SET last_name = ? WHERE email = ?";
         db.execSQL(updateStudentsData, new String[]{lastname, email});
@@ -52,7 +59,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateProfsData, new String[]{lastname, email});
     }
 
-    public void updateFirstname(String firstname, String email) {
+    public void updateFirstname(String firstname, String email)
+    {
         SQLiteDatabase db = this.getWritableDatabase();
         String updateStudentsData = "UPDATE STUDENT_DATA SET first_name = ? WHERE email = ?";
         db.execSQL(updateStudentsData, new String[]{firstname, email});
@@ -68,7 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateProfsData, new String[]{newEmail, oldEmail});
     }
 
-    public void updatePassword(String password, String email) {
+    public void updatePassword(String password, String email)
+    {
         SQLiteDatabase db = this.getWritableDatabase();
         String updateStudentsData = "UPDATE STUDENT_DATA SET password = ? WHERE email = ?";
         db.execSQL(updateStudentsData, new String[]{password, email});
@@ -196,4 +205,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return password;
     }
+    public List<String> extractUsername(String pattern) {
+        List<String> usernames = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            String query = "SELECT last_name, first_name FROM STUDENT_DATA WHERE LOWER(last_name) LIKE LOWER(?) OR LOWER(first_name) LIKE LOWER(?) " +
+                    "UNION " +
+                    "SELECT last_name, first_name FROM PROF_DATA WHERE LOWER(last_name) LIKE LOWER(?) OR LOWER(first_name) LIKE LOWER(?)";
+
+            String searchPattern = "%" + pattern.toLowerCase() + "%";
+            Cursor cursor = db.rawQuery(query, new String[]{searchPattern, searchPattern, searchPattern, searchPattern});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
+                    String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
+                    usernames.add(lastName + " " + firstName);
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        } finally {
+            db.close();
+        }
+
+        return usernames;
+    }
+
 }
