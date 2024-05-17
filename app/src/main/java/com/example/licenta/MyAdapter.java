@@ -1,6 +1,7 @@
 package com.example.licenta;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -29,8 +30,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder>
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position)
     {
-        holder.username.setText(items.get(position).getUsername());
-        holder.profilePicture.setImageResource(items.get(position).getImage());
+        String username = items.get(position).getUsername();
+        int photo = items.get(position).getImage();
+        String email = items.get(position).getEmail();
+        holder.username.setText(username);
+        holder.profilePicture.setImageResource(photo);
+
+        holder.itemView.setOnClickListener(v ->{
+            Intent intent = new Intent(context, ChatPage.class);
+            intent.putExtra("username", username);
+            intent.putExtra("photo", photo);
+            intent.putExtra("email", email);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        });
 
     }
 

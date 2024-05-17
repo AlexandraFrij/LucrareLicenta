@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "licenta.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String CREATE_TABLE_STUDENT_DATA = "CREATE TABLE IF NOT EXISTS STUDENT_DATA (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -30,6 +30,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "password TEXT" +
             ")";
 
+    private static final String CREATE_TABLE_CHAT_ROOMS = "CREATE TABLE IF NOT EXISTS CHAT_ROOMS (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "user1_email TEXT NOT NULL, " +
+            "user2_email TEXT NOT NULL, " +
+            "created_at TIMESTAMP" +
+            ")";
+    private static final String CREATE_TABLE_CHAT_MESSAGES = "CREATE TABLE IF NOT EXISTS CHAT_MESSAGES (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "chat_id INTEGER, " +
+            "sender_email TEXT NOT NULL, " +
+            "message_content TEXT NOT NULL, " +
+            "sent_at TIMESTAMP, " +
+            "FOREIGN KEY (chat_id) REFERENCES CHAT_ROOMS(id) " +
+            ")";
     public DatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,6 +54,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         db.execSQL(CREATE_TABLE_STUDENT_DATA);
         db.execSQL(CREATE_TABLE_PROF_DATA);
+        db.execSQL(CREATE_TABLE_CHAT_ROOMS);
+        db.execSQL(CREATE_TABLE_CHAT_MESSAGES);
     }
 
     @Override
@@ -47,6 +63,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         db.execSQL("DROP TABLE IF EXISTS STUDENT_DATA");
         db.execSQL("DROP TABLE IF EXISTS PROF_DATA");
+        db.execSQL("DROP TABLE IF EXISTS CHAT_ROOMS");
+        db.execSQL("DROP TABLE IF EXISTS CHAT_MESSAGES");
         onCreate(db);
     }
 
@@ -68,12 +86,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateProfsData, new String[]{firstname, email});
     }
 
-    public void updateEmail(String newEmail, String oldEmail) {
+    public void updateEmail(String newEmail, String oldEmail)
+    {
         SQLiteDatabase db = this.getWritableDatabase();
         String updateStudentsData = "UPDATE STUDENT_DATA SET email = ? WHERE email = ?";
         db.execSQL(updateStudentsData, new String[]{newEmail, oldEmail});
         String updateProfsData = "UPDATE PROF_DATA SET email = ? WHERE email = ?";
         db.execSQL(updateProfsData, new String[]{newEmail, oldEmail});
+        String updateChatRoomsDataUser1 = "UPDATE CHAT_ROOMS SET user1_email = ? WHERE user1_email = ?";
+        db.execSQL(updateChatRoomsDataUser1, new String[]{newEmail, oldEmail});
+        String updateChatRoomsDataUser2 = "UPDATE CHAT_ROOMS SET user2_email = ? WHERE user2_email = ?";
+        db.execSQL(updateChatRoomsDataUser2, new String[]{newEmail, oldEmail});
+        String updateChatMessages = "UPDATE CHAT_MESSAGES SET sender_email = ? WHERE sender_email = ?";
+        db.execSQL(updateChatMessages, new String[]{newEmail, oldEmail});
     }
 
     public void updatePassword(String password, String email)
@@ -154,6 +179,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
+    public void insertChatRoom(String user1Email, String user2Email)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try
+        {
+            db.execSQL(
+                    "INSERT INTO CHAT_ROOMS (user1_email, user2_email, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
+                    new Object[]{user1Email, user2Email}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
+    public boolean chatRoomExists(String user1Email, String user2Email)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String query = "SELECT id FROM CHAT_ROOMS WHERE ( user1_email = ? AND user2_email = ?) " +
+                    "OR " +
+                    "( user1_email = ? AND user2_email = ? )";
+
+            Cursor cursor = db.rawQuery(query, new String[]{user1Email, user2Email, user2Email, user1Email});
+
+            if (cursor.moveToFirst()) {
+                return true;
+            }
+
+            return false;
+        } finally {
+            db.close();
+        }
+    }
+    public void insertChatMessage(int chatId, String senderEmail, String messageContent)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try
+        {
+            db.execSQL(
+                    "INSERT INTO CHAT_MESSAGES (chat_id, sender_email, message_content, sent_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
+                    new Object[]{chatId, senderEmail, messageContent}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
     public void deleteAccount(String email)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -205,14 +280,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return password;
     }
-    public List<String> extractUsername(String pattern) {
-        List<String> usernames = new ArrayList<>();
+    public Users extractUsername(String pattern) {
+        Users users = new Users();
         SQLiteDatabase db = this.getReadableDatabase();
 
         try {
-            String query = "SELECT last_name, first_name FROM STUDENT_DATA WHERE LOWER(last_name) LIKE LOWER(?) OR LOWER(first_name) LIKE LOWER(?) " +
+            String query = "SELECT last_name, first_name, email FROM STUDENT_DATA WHERE LOWER(last_name) LIKE LOWER(?) OR LOWER(first_name) LIKE LOWER(?) " +
                     "UNION " +
-                    "SELECT last_name, first_name FROM PROF_DATA WHERE LOWER(last_name) LIKE LOWER(?) OR LOWER(first_name) LIKE LOWER(?)";
+                    "SELECT last_name, first_name, email FROM PROF_DATA WHERE LOWER(last_name) LIKE LOWER(?) OR LOWER(first_name) LIKE LOWER(?)";
 
             String searchPattern = "%" + pattern.toLowerCase() + "%";
             Cursor cursor = db.rawQuery(query, new String[]{searchPattern, searchPattern, searchPattern, searchPattern});
@@ -221,7 +296,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
                     String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
-                    usernames.add(lastName + " " + firstName);
+                    String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+                    users.addUsername(lastName + " " + firstName);
+                    users.addEmail(email);
                 } while (cursor.moveToNext());
             }
 
@@ -230,7 +307,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
 
-        return usernames;
+        return users;
+    }
+    public int retrieveChatRoomId(String user1Email, String user2Email)
+    {
+        int id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT id FROM CHAT_ROOMS WHERE (user1_email = ? AND user2_email = ?)" +
+                " OR" +
+                " (user1_email = ? AND user2_email = ?) ";
+        Cursor cursor = db.rawQuery(query, new String[]{user1Email, user2Email, user2Email, user1Email});
+
+        if (cursor.moveToFirst())
+        {
+            id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+        }
+        return id;
     }
 
 }

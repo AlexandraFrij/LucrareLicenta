@@ -31,7 +31,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/profileName"
+        android:id="@+id/other_username"
         android:layout_below="@id/profilePhoto"
         android:layout_marginTop="0dp"
         android:layout_centerHorizontal="true"
@@ -51,40 +51,19 @@
         android:layout_margin="10dp"
         />
 
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/convMessages"
+        android:id="@+id/messages"
         android:background="@color/a2d222f"
-        android:layout_below="@id/profileName"
-        android:layout_above="@id/insertTextField"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_received_messages"
-        android:text="Buna ziua!"
-        android:textSize="20dp"
-        android:textColor="@color/black"
-        android:layout_below="@id/profileName"
-        android:layout_margin="20dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_send_messages"
-        android:text="Buna ziua!"
-        android:textSize="20dp"
-        android:textColor="@color/black"
-        android:layout_below="@id/profileName"
-        android:layout_margin="20dp"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@id/other_username"
+        android:layout_above="@id/message_input"
         />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:id="@+id/insertTextField"
+        android:id="@+id/message_input"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_toStartOf="@+id/sendBtn"
@@ -92,5 +71,6 @@
         android:textColorHint="@color/black"
         android:background="@drawable/backgound_send_btn"
         android:layout_margin="10dp"
+        android:gravity="center"
         />
 </RelativeLayout>

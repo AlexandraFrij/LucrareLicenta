@@ -44,17 +44,19 @@ public class SearchUser extends AppCompatActivity
             public void onClick(View v)
             {
                 String usernamePattern = usernameEdit.getText().toString().trim();
-                if (usernamePattern.length() < 3 || usernamePattern.isEmpty() )
+                if (usernamePattern.length() < 3)
                 {
                     usernameEdit.setError("Utilizatorul nu exista");
                 }
                 else
                 {
-                    List<String> usernames = dbHelper.extractUsername(usernamePattern);
+                    Users userInfo = dbHelper.extractUsername(usernamePattern);
+                    List<String> usernames = userInfo.getUsernames();
+                    List<String> emails = userInfo.getEmails();
                     List<RecycleViewItem> users = new ArrayList<RecycleViewItem>();
                     for (int i = 0; i < usernames.size(); i++)
                     {
-                        users.add(new RecycleViewItem(usernames.get(i), R.drawable.profile_pic));
+                        users.add(new RecycleViewItem(usernames.get(i), R.drawable.profile_pic,emails.get(i) ));
                     }
                     usersView.setLayoutManager(new LinearLayoutManager(SearchUser.this));
                     usersView.setAdapter(new MyAdapter(getApplicationContext(), users));
