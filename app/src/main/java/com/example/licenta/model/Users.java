@@ -1,4 +1,4 @@
-package com.example.licenta;
+package com.example.licenta.model;
 
 import java.util.ArrayList;
 import java.util.List;

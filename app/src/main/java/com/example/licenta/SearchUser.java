@@ -1,8 +1,6 @@
 package com.example.licenta;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,8 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.licenta.adapter.SearchUserAdapter;
+import com.example.licenta.item.SearchUserRecyclerViewItem;
+import com.example.licenta.model.Users;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,13 +53,13 @@ public class SearchUser extends AppCompatActivity
                     Users userInfo = dbHelper.extractUsername(usernamePattern);
                     List<String> usernames = userInfo.getUsernames();
                     List<String> emails = userInfo.getEmails();
-                    List<RecycleViewItem> users = new ArrayList<RecycleViewItem>();
+                    List<SearchUserRecyclerViewItem> users = new ArrayList<SearchUserRecyclerViewItem>();
                     for (int i = 0; i < usernames.size(); i++)
                     {
-                        users.add(new RecycleViewItem(usernames.get(i), R.drawable.profile_pic,emails.get(i) ));
+                        users.add(new SearchUserRecyclerViewItem(usernames.get(i), R.drawable.profile_pic,emails.get(i) ));
                     }
                     usersView.setLayoutManager(new LinearLayoutManager(SearchUser.this));
-                    usersView.setAdapter(new MyAdapter(getApplicationContext(), users));
+                    usersView.setAdapter(new SearchUserAdapter(getApplicationContext(), users));
                 }
 
 

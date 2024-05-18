@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.licenta.model.Messages;
+import com.example.licenta.model.Users;
+
+import java.sql.Timestamp;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "licenta.db";
@@ -323,6 +325,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
         }
         return id;
+    }
+    public Messages extractMessages(int chat_id) {
+        Messages messages = new Messages();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT message_content, sender_email, sent_at FROM CHAT_MESSAGES " +
+                "WHERE chat_id = ? " +
+                "ORDER BY sent_at ASC";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(chat_id)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                String messageContent = cursor.getString(cursor.getColumnIndexOrThrow("message_content"));
+                String senderEmail = cursor.getString(cursor.getColumnIndexOrThrow("sender_email"));
+                Timestamp sentAt = Timestamp.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("sent_at")));
+
+                messages.addMessage(messageContent, senderEmail, sentAt);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return messages;
     }
 
 }

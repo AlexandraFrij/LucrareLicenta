@@ -1,12 +1,12 @@
-package com.example.licenta;
+package com.example.licenta.item;
 
-public class RecycleViewItem
+public class SearchUserRecyclerViewItem
 {
     String username;
     String email;
     int image;
 
-    public RecycleViewItem(String username,int image, String email)
+    public SearchUserRecyclerViewItem(String username, int image, String email)
     {
         this.username = username;
         this.image = image;

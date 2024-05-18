@@ -1,4 +1,4 @@
-package com.example.licenta;
+package com.example.licenta.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,27 +8,32 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.licenta.ChatPage;
+import com.example.licenta.holder.SearchUserHolder;
+import com.example.licenta.R;
+import com.example.licenta.item.SearchUserRecyclerViewItem;
+
 import java.util.List;
 
-public class MyAdapter extends RecyclerView.Adapter<MyViewHolder>
+public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserHolder>
 {
     Context context;
-    List<RecycleViewItem> items;
+    List<SearchUserRecyclerViewItem> items;
 
-    public MyAdapter(Context context, List<RecycleViewItem> items) {
+    public SearchUserAdapter(Context context, List<SearchUserRecyclerViewItem> items) {
         this.context = context;
         this.items = items;
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    public SearchUserHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.searched_user, parent, false));
+        return new SearchUserHolder(LayoutInflater.from(context).inflate(R.layout.searched_user, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position)
+    public void onBindViewHolder(@NonNull SearchUserHolder holder, int position)
     {
         String username = items.get(position).getUsername();
         int photo = items.get(position).getImage();

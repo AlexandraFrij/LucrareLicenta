@@ -69,6 +69,7 @@
         android:layout_toStartOf="@+id/sendBtn"
         android:hint="Tasteaza aici:"
         android:textColorHint="@color/black"
+        android:textColor="@color/white"
         android:background="@drawable/backgound_send_btn"
         android:layout_margin="10dp"
         android:gravity="center"

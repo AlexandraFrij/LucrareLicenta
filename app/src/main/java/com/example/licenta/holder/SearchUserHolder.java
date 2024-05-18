@@ -1,4 +1,4 @@
-package com.example.licenta;
+package com.example.licenta.holder;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -7,11 +7,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyViewHolder extends RecyclerView.ViewHolder
+import com.example.licenta.R;
+
+public class SearchUserHolder extends RecyclerView.ViewHolder
 {
-    ImageView profilePicture;
-    TextView username;
-    public MyViewHolder(@NonNull View itemView)
+    public ImageView profilePicture;
+    public TextView username;
+    public SearchUserHolder(@NonNull View itemView)
     {
         super(itemView);
         profilePicture = itemView.findViewById(R.id.profile_picture);
