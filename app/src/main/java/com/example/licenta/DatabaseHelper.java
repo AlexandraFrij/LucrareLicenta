@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.licenta.model.ChatRoom;
 import com.example.licenta.model.Messages;
 import com.example.licenta.model.Users;
 
@@ -348,6 +349,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return messages;
+    }
+    public ChatRoom extractChatRoom(String email) {
+        ChatRoom chatRoom = new ChatRoom();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT id, user1_email, user2_email FROM CHAT_ROOMS " +
+                "WHERE user1_email = ? " +
+                "OR user2_email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email, email});
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String user1_email = cursor.getString(cursor.getColumnIndexOrThrow("user1_email"));
+                String user2_email = cursor.getString(cursor.getColumnIndexOrThrow("user2_email"));
+
+                chatRoom.addChatRoom(user1_email, user2_email, id);
+            } while (cursor.moveToNext());
+        }
+        return chatRoom;
+    }
+    public String[] getRecentMessage(int chatRoomId)
+    {
+        String[] recentMessage = new String[2];
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT message_content, strftime('%H:%M', sent_at) as formatted_timestamp " +
+                "FROM CHAT_MESSAGES " +
+                "WHERE chat_id = ? " +
+                "ORDER BY sent_at DESC " +
+                "LIMIT 1";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(chatRoomId)});
+
+        if (cursor.moveToFirst()) {
+            recentMessage[0] = cursor.getString(cursor.getColumnIndexOrThrow("message_content"));
+            recentMessage[1] = cursor.getString(cursor.getColumnIndexOrThrow("formatted_timestamp"));
+        }
+
+        cursor.close();
+        db.close();
+        return recentMessage;
     }
 
 }

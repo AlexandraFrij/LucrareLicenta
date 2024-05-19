@@ -38,77 +38,15 @@
         android:drawablePadding="10dp"
         android:gravity="center_vertical|start"
         />
-    <ImageView
-        android:id="@+id/profilePic"
-        android:layout_width="84dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="50dp"
-        android:layout_below="@id/search"
-        android:src="@drawable/profile_pic" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/personName"
-        android:text="Ioana Popa"
-        android:textColor="@color/fadcd5"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/profilePic"
-        android:layout_alignTop="@id/profilePic"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recent_chats_viewer"
+        android:layout_below="@+id/search"
+        android:layout_marginTop = "20dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/message"
-        android:text="Cum a fost cursul de azi?"
-        android:textColor="@color/fadcd5"
-        android:textStyle="italic"
-        android:textSize="18dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/profilePic"
-        android:layout_below="@id/personName"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"/>
-
-    <ImageView
-        android:id="@+id/profilePic1"
-        android:layout_width="84dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="2dp"
-        android:src="@drawable/profile_pic"
-        android:layout_below="@id/message"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/personName1"
-        android:text="Maria Neagu"
-        android:textColor="@color/fadcd5"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/profilePic1"
-        android:layout_alignTop="@id/profilePic1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/message1"
-        android:text="Ma voi uita eu peste el, sper ca e ok"
-        android:textColor="@color/fadcd5"
-        android:textStyle="italic"
-        android:textSize="18dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/profilePic1"
-        android:layout_below="@id/personName1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp" />
+        android:background="@drawable/gradient_background_menu"
+        />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"

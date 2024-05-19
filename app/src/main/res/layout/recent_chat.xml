@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corners_background"
+    android:layout_margin="10dp"
+    android:elevation="10dp"
+    >
+    <ImageView
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:id="@+id/profile_picture"
+        android:src="@drawable/profile_pic"
+        android:background="@drawable/round_background"
+        android:layout_margin="15dp"
+        />
+
+    <TextView
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="User name"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/fadcd5"
+        android:layout_marginTop="18dp"
+        android:id="@+id/username"
+        android:layout_toRightOf="@id/profile_picture" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello, how are you?"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:textColor="@color/fadcd5"
+        android:layout_below="@id/username"
+        android:layout_toRightOf="@id/profile_picture"
+        android:layout_marginTop="2dp"
+        android:id="@+id/last_message" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:textColor="@color/fadcd5"
+        android:layout_toRightOf="@id/username"
+        android:id="@+id/last_message_time"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="16dp"/>
+
+</RelativeLayout>

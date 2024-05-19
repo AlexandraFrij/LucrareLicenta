@@ -61,7 +61,7 @@ public class ChatPage extends AppCompatActivity
         goBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent conversation = new Intent(ChatPage.this, SearchUser.class);
+                Intent conversation = new Intent(ChatPage.this, ConversationsPage.class);
                 startActivity(conversation);
             }
         });
