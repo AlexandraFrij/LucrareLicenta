@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:id="@+id/calendar"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="100dp"
         android:background="@drawable/background_calendar"
         android:dateTextAppearance="@style/CalendarDateText"
         android:weekDayTextAppearance="@style/CalendarWeekDayText" />
@@ -57,5 +57,12 @@
         app:itemIconTint="@color/fadcd5"
         app:itemTextColor="@color/fadcd5"
         android:background="@drawable/gradient_background_menu" />
+
+    <include layout="@layout/calendar_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/calendar"
+        android:layout_marginTop="20dp"
+        />
 
 </RelativeLayout>
