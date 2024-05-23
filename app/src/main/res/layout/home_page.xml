@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,45 +7,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".HomePage">
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/profileImage"
-        android:src="@drawable/profile_pic"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/username"
-        android:layout_toRightOf="@id/profileImage"
-        android:layout_marginTop="17dp"
-        android:text="Username"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:textColor="@color/fadcd5"
-    />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/email"
-        android:layout_toRightOf="@id/profileImage"
-        android:layout_below="@+id/username"
-        android:text="mail@mail.com"
-        android:textSize="13dp"
-        android:textStyle="italic"
-        android:textColor="@color/fadcd5"
-        />
-    <CalendarView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:id="@+id/calendar"
-        android:layout_marginTop="100dp"
-        android:background="@drawable/background_calendar"
-        android:dateTextAppearance="@style/CalendarDateText"
-        android:weekDayTextAppearance="@style/CalendarWeekDayText" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/profileImage"
+                    android:src="@drawable/profile_pic"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/username"
+                    android:layout_toRightOf="@id/profileImage"
+                    android:layout_marginTop="17dp"
+                    android:text="Username"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/fadcd5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/email"
+                    android:layout_toRightOf="@id/profileImage"
+                    android:layout_below="@+id/username"
+                    android:text="mail@mail.com"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/fadcd5" />
+            </RelativeLayout>
+
+            <CalendarView
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:id="@+id/calendar"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/background_calendar"
+                android:dateTextAppearance="@style/CalendarDateText"
+                android:weekDayTextAppearance="@style/CalendarWeekDayText" />
+
+            <include layout="@layout/calendar_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
@@ -57,12 +80,5 @@
         app:itemIconTint="@color/fadcd5"
         app:itemTextColor="@color/fadcd5"
         android:background="@drawable/gradient_background_menu" />
-
-    <include layout="@layout/calendar_events"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/calendar"
-        android:layout_marginTop="20dp"
-        />
 
 </RelativeLayout>

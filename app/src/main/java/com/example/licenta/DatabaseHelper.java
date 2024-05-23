@@ -47,6 +47,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "sent_at TIMESTAMP, " +
             "FOREIGN KEY (chat_id) REFERENCES CHAT_ROOMS(id) " +
             ")";
+
+    private static final String CREATE_TABLE_CALENDAR= "CREATE TABLE IF NOT EXISTS CALENDAR (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "name TEXT NOT NULL, " +
+            "date TEXT NOT NULL, " +
+            "time TEXT NOT NULL " +
+            ")";
     public DatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -59,6 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_PROF_DATA);
         db.execSQL(CREATE_TABLE_CHAT_ROOMS);
         db.execSQL(CREATE_TABLE_CHAT_MESSAGES);
+        db.execSQL(CREATE_TABLE_CALENDAR);
     }
 
     @Override
@@ -68,6 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS PROF_DATA");
         db.execSQL("DROP TABLE IF EXISTS CHAT_ROOMS");
         db.execSQL("DROP TABLE IF EXISTS CHAT_MESSAGES");
+        db.execSQL("DROP TABLE IF EXISTS CALENDAR");
         onCreate(db);
     }
 
