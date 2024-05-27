@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
+import com.example.licenta.model.CalendarEvent;
 import com.example.licenta.model.ChatRoom;
 import com.example.licenta.model.Messages;
 import com.example.licenta.model.Users;
@@ -13,7 +15,7 @@ import java.sql.Timestamp;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "licenta.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String CREATE_TABLE_STUDENT_DATA = "CREATE TABLE IF NOT EXISTS STUDENT_DATA (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -52,7 +54,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "name TEXT NOT NULL, " +
             "date TEXT NOT NULL, " +
-            "time TEXT NOT NULL " +
+            "start_time TEXT NOT NULL, " +
+            "end_time TEXT NOT NULL " +
             ")";
     public DatabaseHelper(Context context)
     {
@@ -397,6 +400,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return recentMessage;
+    }
+    public boolean timeIsAvailable(String date, String startTime, String endTime) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String query = "SELECT COUNT(*) FROM CALENDAR WHERE date = ? AND (start_time < ? AND end_time > ?)";
+
+            Cursor cursor = db.rawQuery(query, new String[]{date, endTime, startTime});
+
+            if (cursor.moveToFirst() && cursor.getInt(0) > 0) {
+                return false;
+            }
+
+            return true;
+        } finally {
+            db.close();
+        }
+    }
+
+
+    public void addEvent(String name, String date, String startTime, String endTime)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try
+        {
+            db.execSQL(
+                    "INSERT INTO CALENDAR (name, date, start_time, end_time) VALUES (?, ?, ?, ?)",
+                    new Object[]{name, date, startTime, endTime}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
+    public CalendarEvent extractCalendarEvents() {
+        CalendarEvent calendarEvent = new CalendarEvent();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            String query = "SELECT name, date, start_time, end_time FROM CALENDAR";
+            Cursor cursor = db.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                    String start = cursor.getString(cursor.getColumnIndexOrThrow("start_time"));
+                    String end = cursor.getString(cursor.getColumnIndexOrThrow("end_time"));
+                    String time = start + " - " + end;
+                    calendarEvent.addEvent(name, date, time);
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        } finally {
+            db.close();
+        }
+
+        return calendarEvent;
     }
 
 }

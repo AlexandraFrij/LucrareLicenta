@@ -63,7 +63,7 @@
                 android:dateTextAppearance="@style/CalendarDateText"
                 android:weekDayTextAppearance="@style/CalendarWeekDayText" />
 
-            <include layout="@layout/calendar_events"
+            <include layout="@layout/add_calendar_events"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp" />
