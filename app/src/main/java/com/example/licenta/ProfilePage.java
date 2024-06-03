@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.Cursor;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +52,7 @@ public class ProfilePage extends AppCompatActivity {
             else
             if (v.getId() == R.id.goBackBtn)
             {
-                Intent home = new Intent(ProfilePage.this, HomePage.class);
+                Intent home = new Intent(ProfilePage.this, ProfHomePage.class);
                 startActivity(home);
             }
             else

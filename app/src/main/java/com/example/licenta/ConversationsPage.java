@@ -60,7 +60,7 @@ public class ConversationsPage extends AppCompatActivity
     }
     protected boolean onNavigationItemSelectedHandler(MenuItem item) {
         if (item.getItemId() == R.id.homeBtn) {
-            startActivity(new Intent(this, HomePage.class));
+            startActivity(new Intent(this, ProfHomePage.class));
             return true;
 
         } else if (item.getItemId() == R.id.messagesBtn) {

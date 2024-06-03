@@ -3,8 +3,6 @@ package com.example.licenta;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -18,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 public class LoginPage extends AppCompatActivity {
+    String email;
 
     private DatabaseHelper dbHelper;
     @Override
@@ -60,7 +59,7 @@ public class LoginPage extends AppCompatActivity {
             {
                 if (v.getId() == R.id.loginBtn)
                 {
-                    String email = editTextEmail.getText().toString().trim();
+                    email = editTextEmail.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
 
                     String pass = dbHelper.extractPasswordUsingEmail(email);
@@ -73,8 +72,17 @@ public class LoginPage extends AppCompatActivity {
                         editor.putString("email", email);
                         editor.commit();
 
-                        Intent home = new Intent(LoginPage.this, HomePage.class);
-                        startActivity(home);
+                        if(dbHelper.userIsStudent(email))
+                        {
+                            Intent home = new Intent(LoginPage.this, StudentHomePage.class);
+                            startActivity(home);
+                        }
+                        else
+                        {
+                            Intent home = new Intent(LoginPage.this, ProfHomePage.class);
+                            startActivity(home);
+                        }
+
                     }
 
                 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/studentAttendancesPage"
+    android:background="@drawable/gradient_background_menu"
+    tools:context=".StudentAttendances">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@id/goBackBtn"
+        android:text="."
+        android:drawableLeft="@drawable/baseline_arrow_back_ios_24"
+        android:background="@android:color/transparent"
+        android:drawableTint="@color/white"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/attendances_viewer"
+        android:layout_below="@+id/goBackBtn"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        />
+</RelativeLayout>

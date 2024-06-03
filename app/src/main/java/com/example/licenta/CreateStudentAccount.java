@@ -54,6 +54,7 @@ public class CreateStudentAccount extends AppCompatActivity
                 Toast.makeText(CreateStudentAccount.this, message, Toast.LENGTH_SHORT).show();
             } else {
                 dbHelper.insertStudentData(lastName, firstName, email, idNumber, year, group, password);
+                dbHelper.insertUser(email, "student");
                 Intent login = new Intent(CreateStudentAccount.this, LoginPage.class);
                 startActivity(login);
             }

@@ -49,6 +49,7 @@ public class CreateProfAccount extends AppCompatActivity
             } else
             {
                 dbHelper.insertProfData(lastName, firstName, email, password);
+                dbHelper.insertUser(email, "professor");
                 Intent login = new Intent(CreateProfAccount.this, LoginPage.class);
                 startActivity(login);
             }

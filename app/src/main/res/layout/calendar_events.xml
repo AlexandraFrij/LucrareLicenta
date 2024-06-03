@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_corners_background"
+    android:background="@drawable/gradient_background_menu"
     android:layout_margin="10dp"
     android:elevation="10dp"
     >
@@ -50,12 +50,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end"
-        android:layout_below="@+id/event_time">
+        android:layout_below="@+id/event_time"
+        android:id="@+id/profBtnLayout">
         <Button
             android:id="@+id/edit_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit"
+            android:text="Modifica"
             android:background="@android:color/transparent"
             android:textColor="@color/fadcd5"
             android:padding="8dp" />
@@ -64,7 +65,24 @@
             android:id="@+id/delete_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:text="Sterge"
+            android:background="@android:color/transparent"
+            android:textColor="@color/fadcd5"
+            android:padding="8dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_below="@+id/event_time"
+        android:id="@+id/studentBtnLayout">
+
+        <Button
+            android:id="@+id/mark_attendance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marcheaza prezenta"
             android:background="@android:color/transparent"
             android:textColor="@color/fadcd5"
             android:padding="8dp" />

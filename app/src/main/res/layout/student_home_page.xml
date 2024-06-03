@@ -5,9 +5,9 @@
     android:background="@drawable/gradient_background"
     android:id="@+id/homePage"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".HomePage">
+    tools:context=".StudentHomePage">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -45,10 +45,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/email"
+                    android:id="@+id/idNumber"
                     android:layout_toRightOf="@id/profileImage"
                     android:layout_below="@+id/username"
-                    android:text="mail@mail.com"
+                    android:text="ABCDEF2111324"
                     android:textSize="13sp"
                     android:textStyle="italic"
                     android:textColor="@color/fadcd5" />
@@ -56,20 +56,54 @@
 
             <CalendarView
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="350dp"
                 android:id="@+id/calendar"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/background_calendar"
                 android:dateTextAppearance="@style/CalendarDateText"
                 android:weekDayTextAppearance="@style/CalendarWeekDayText" />
 
-            <include layout="@layout/add_calendar_events"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/attendancesBtn"
+                    android:layout_marginTop="15dp"
+                    android:drawableStart="@drawable/baseline_check_circle_24"
+                    android:background="@drawable/rounded_corners_background"
+                    android:drawableTint="@color/fadcd5"
+                    android:text="Prezentele tale"
+                    android:textStyle="italic"
+                    android:textColor="@color/fadcd5"
+                    android:elevation="20dp"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical|start"
+                    android:paddingStart="110dp"
+                    android:paddingEnd="16dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Evenimente din aceasta zi:"
+                    android:textColor="@color/fadcd5"
+                    android:textStyle="italic"
+                    android:id="@+id/todayEvents"
+                    android:gravity="center"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/attendancesBtn"
+                    android:layout_marginTop="15dp" />
+            </RelativeLayout>
+
+            <include layout="@layout/today_calendar_events"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp" />
-
+                android:layout_marginTop="15dp" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
@@ -80,5 +114,4 @@
         app:itemIconTint="@color/fadcd5"
         app:itemTextColor="@color/fadcd5"
         android:background="@drawable/gradient_background_menu" />
-
 </RelativeLayout>

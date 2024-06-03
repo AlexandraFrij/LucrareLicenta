@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.licenta.item.AttendanceRecyclerViewItem;
 import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
+import com.example.licenta.model.Attendance;
 import com.example.licenta.model.CalendarEvent;
 import com.example.licenta.model.ChatRoom;
 import com.example.licenta.model.Messages;
@@ -15,7 +17,7 @@ import java.sql.Timestamp;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "licenta.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     private static final String CREATE_TABLE_STUDENT_DATA = "CREATE TABLE IF NOT EXISTS STUDENT_DATA (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -57,6 +59,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "start_time TEXT NOT NULL, " +
             "end_time TEXT NOT NULL " +
             ")";
+    private static final String CREATE_TABLE_USERS= "CREATE TABLE IF NOT EXISTS USERS (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "email TEXT NOT NULL, " +
+            "status TEXT NOT NULL " +
+            ")";
+    private static final String CREATE_TABLE_ATTENDANCES= "CREATE TABLE IF NOT EXISTS ATTENDANCES (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "last_name TEXT NOT NULL, " +
+            "first_name TEXT NOT NULL, " +
+            "id_number TEXT NOT NULL, " +
+            "class_type TEXT NOT NULL, " +
+            "date TEXT NOT NULL " +
+            ")";
     public DatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -70,6 +85,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CHAT_ROOMS);
         db.execSQL(CREATE_TABLE_CHAT_MESSAGES);
         db.execSQL(CREATE_TABLE_CALENDAR);
+        db.execSQL(CREATE_TABLE_USERS);
+        db.execSQL(CREATE_TABLE_ATTENDANCES);
     }
 
     @Override
@@ -80,6 +97,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS CHAT_ROOMS");
         db.execSQL("DROP TABLE IF EXISTS CHAT_MESSAGES");
         db.execSQL("DROP TABLE IF EXISTS CALENDAR");
+        db.execSQL("DROP TABLE IF EXISTS USERS");
+        db.execSQL("DROP TABLE IF EXISTS ATTENDANCES");
         onCreate(db);
     }
 
@@ -90,6 +109,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateStudentsData, new String[]{lastname, email});
         String updateProfsData = "UPDATE PROF_DATA SET last_name = ? WHERE email = ?";
         db.execSQL(updateProfsData, new String[]{lastname, email});
+        String updateAttendancesData = "UPDATE ATTENDANCES SET last_name = ? WHERE email = ?";
+        db.execSQL(updateAttendancesData, new String[]{lastname, email});
     }
 
     public void updateFirstname(String firstname, String email)
@@ -99,6 +120,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateStudentsData, new String[]{firstname, email});
         String updateProfsData = "UPDATE PROF_DATA SET first_name = ? WHERE email = ?";
         db.execSQL(updateProfsData, new String[]{firstname, email});
+        String updateAttendancesData = "UPDATE ATTENDANCES SET last_name = ? WHERE email = ?";
+        db.execSQL(updateAttendancesData, new String[]{firstname, email});
     }
 
     public void updateEmail(String newEmail, String oldEmail)
@@ -114,6 +137,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateChatRoomsDataUser2, new String[]{newEmail, oldEmail});
         String updateChatMessages = "UPDATE CHAT_MESSAGES SET sender_email = ? WHERE sender_email = ?";
         db.execSQL(updateChatMessages, new String[]{newEmail, oldEmail});
+        String updateUsers = "UPDATE USERS SET email = ? WHERE email = ?";
+        db.execSQL(updateUsers, new String[]{newEmail, oldEmail});
     }
 
     public void updatePassword(String password, String email)
@@ -435,13 +460,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
-    public CalendarEvent extractCalendarEvents() {
+    public CalendarEvent extractCalendarEvents(String day) {
         CalendarEvent calendarEvent = new CalendarEvent();
         SQLiteDatabase db = this.getReadableDatabase();
 
         try {
-            String query = "SELECT name, date, start_time, end_time FROM CALENDAR";
-            Cursor cursor = db.rawQuery(query, null);
+            String query = "SELECT name, date, start_time, end_time FROM CALENDAR WHERE date = ?";
+            Cursor cursor = db.rawQuery(query, new String[]{day});
 
             if (cursor.moveToFirst()) {
                 do {
@@ -462,4 +487,151 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return calendarEvent;
     }
 
+    public void deleteEvent(String name, String date, String startHour, String endHour)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String deleteEvent = "DELETE FROM CALENDAR WHERE name = ? AND date = ? AND start_time = ? AND end_time = ?";
+        db.execSQL(deleteEvent, new String[]{name, date, startHour,endHour});
+
+    }
+    public void modifyEvent(String currentName, String currentDate, String currentStartTime, String currentEndTime, String newName, String newDate, String newStartTime, String newEndTime)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try
+        {
+            db.execSQL(
+                    "UPDATE CALENDAR SET name = ?, date = ?, start_time = ?, end_time = ? " +
+                            "WHERE name = ? AND date = ? AND start_time = ? AND end_time = ?",
+                    new Object[]{newName, newDate, newStartTime, newEndTime, currentName, currentDate, currentStartTime, currentStartTime}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
+
+    public void insertUser(String email, String status)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try
+        {
+            db.execSQL(
+                    "INSERT INTO USERS (email, status) VALUES (?, ?)",
+                    new Object[]{email, status}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
+    public void insertStudentAttendance(String last_name, String first_name, String id_number, String class_type,String date)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try
+        {
+            db.execSQL(
+                    "INSERT INTO ATTENDANCES (last_name, first_name, id_number, class_type, date) VALUES (?, ?, ?, ?, ?)",
+                    new Object[]{last_name, first_name, id_number, class_type, date}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
+    public boolean userIsStudent(String userEmail)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String query = "SELECT status FROM USERS WHERE  email = ? " ;
+
+            Cursor cursor = db.rawQuery(query, new String[]{userEmail});
+
+            if (cursor.moveToFirst()) {
+                String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                if (status.equals("student"))
+                    return true;
+            }
+            return false;
+        } finally {
+            db.close();
+        }
+    }
+    public String retrieveIdNumber(String email)
+    {
+        String idNumber = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT id_number FROM STUDENT_DATA WHERE email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+
+        if (cursor.moveToFirst())
+        {
+            idNumber = cursor.getString(cursor.getColumnIndexOrThrow("id_number"));;
+        }
+        return idNumber;
+    }
+    public String retrieveLastName(String email)
+    {
+        String lastName = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT last_name FROM STUDENT_DATA WHERE email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+
+        if (cursor.moveToFirst())
+        {
+            lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));;
+        }
+        return lastName;
+    }
+    public String retrieveFirstName(String email)
+    {
+        String firstName = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT first_name FROM STUDENT_DATA WHERE email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+
+        if (cursor.moveToFirst())
+        {
+            firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));;
+        }
+        return firstName;
+    }
+    public boolean studentWasPresent(String idNumber, String date, String classType)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String query = "SELECT id FROM ATTENDANCES WHERE  id_number = ? AND date = ? AND class_type = ? " ;
+
+            Cursor cursor = db.rawQuery(query, new String[]{idNumber, date,classType});
+
+            if (cursor.moveToFirst()) {
+                    return true;
+            }
+            return false;
+        } finally {
+            db.close();
+        }
+    }
+    public Attendance retrieveAttendances(String idNumber)
+    {
+        Attendance attendance = new Attendance();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT class_type, date FROM ATTENDANCES WHERE id_number = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{idNumber});
+
+        if (cursor.moveToFirst())
+        {
+            String name = cursor.getString(cursor.getColumnIndexOrThrow("class_type"));
+            String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+            attendance.addAttendance(name, date);
+        }
+        return attendance;
+    }
 }

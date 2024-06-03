@@ -28,12 +28,16 @@
     <activity android:name=".CreateProfAccount" android:exported="true" />
     <activity android:name=".CreateStudentAccount" android:exported="true"/>
     <activity android:name=".EditProfilePage" android:exported="true" />
-    <activity android:name=".HomePage" android:exported="true" />
+    <activity android:name=".ProfHomePage" android:exported="true" />
+    <activity android:name=".StudentHomePage" android:exported="true" />
     <activity android:name=".NotificationsPage" android:exported="true"/>
     <activity android:name=".ProfilePage" android:exported="true"/>
     <activity android:name=".ForgotPasswordPage" android:exported="true"/>
     <activity android:name=".ResetPassword" android:exported="true"/>
     <activity android:name=".SearchUser" android:exported="true"/>
+    <activity android:name=".AddCalendarEvent" android:exported="true"/>
+    <activity android:name=".EditCalendarEvent" android:exported="true"/>
+    <activity android:name=".StudentAttendances" android:exported="true"/>
 
     </application>
     </manifest>
