@@ -40,7 +40,7 @@ public class ProfilePage extends AppCompatActivity {
         View.OnClickListener buttonClickListener = v -> {
             if (v.getId() == R.id.logoffBtn)
             {
-                Intent signIn = new Intent(ProfilePage.this, SignInPage.class);
+                Intent signIn = new Intent(ProfilePage.this, LoginPage.class);
                 startActivity(signIn);
             }
             else
@@ -60,7 +60,7 @@ public class ProfilePage extends AppCompatActivity {
             {
                 dbHelper.deleteAccount(email);
                 Toast.makeText(ProfilePage.this, "Cont sters!", Toast.LENGTH_LONG).show();
-                Intent signIn = new Intent(ProfilePage.this, SignInPage.class);
+                Intent signIn = new Intent(ProfilePage.this, LoginPage.class);
                 startActivity(signIn);
             }
             else

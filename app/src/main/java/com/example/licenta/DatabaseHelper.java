@@ -11,13 +11,14 @@ import com.example.licenta.model.Attendance;
 import com.example.licenta.model.CalendarEvent;
 import com.example.licenta.model.ChatRoom;
 import com.example.licenta.model.Messages;
+import com.example.licenta.model.Notification;
 import com.example.licenta.model.Users;
 
 import java.sql.Timestamp;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "licenta.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 13;
 
     private static final String CREATE_TABLE_STUDENT_DATA = "CREATE TABLE IF NOT EXISTS STUDENT_DATA (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -25,23 +26,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "first_name TEXT, " +
             "email TEXT UNIQUE, " +
             "id_number TEXT UNIQUE, " +
-            "year TEXT, " +
-            "class TEXT, " +
-            "password TEXT" +
+            "FOREIGN KEY (email) REFERENCES USERS(email) ON DELETE CASCADE" +
             ")";
     private static final String CREATE_TABLE_PROF_DATA = "CREATE TABLE IF NOT EXISTS PROF_DATA (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "last_name TEXT, " +
             "first_name TEXT, " +
             "email TEXT UNIQUE, " +
-            "password TEXT" +
+            "identification_number TEXT UNIQUE, " +
+            "FOREIGN KEY (email) REFERENCES USERS(email) ON DELETE CASCADE" +
             ")";
 
     private static final String CREATE_TABLE_CHAT_ROOMS = "CREATE TABLE IF NOT EXISTS CHAT_ROOMS (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "user1_email TEXT NOT NULL, " +
             "user2_email TEXT NOT NULL, " +
-            "created_at TIMESTAMP" +
+            "created_at TIMESTAMP, " +
+            "FOREIGN KEY (user1_email) REFERENCES USERS(email) ON DELETE CASCADE, " +
+            "FOREIGN KEY (user2_email) REFERENCES USERS(email)ON DELETE CASCADE " +
             ")";
     private static final String CREATE_TABLE_CHAT_MESSAGES = "CREATE TABLE IF NOT EXISTS CHAT_MESSAGES (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -49,7 +51,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "sender_email TEXT NOT NULL, " +
             "message_content TEXT NOT NULL, " +
             "sent_at TIMESTAMP, " +
-            "FOREIGN KEY (chat_id) REFERENCES CHAT_ROOMS(id) " +
+            "FOREIGN KEY (chat_id) REFERENCES CHAT_ROOMS(id) ON DELETE CASCADE, " +
+            "FOREIGN KEY (sender_email) REFERENCES USERS(email) ON DELETE CASCADE " +
             ")";
 
     private static final String CREATE_TABLE_CALENDAR= "CREATE TABLE IF NOT EXISTS CALENDAR (" +
@@ -57,11 +60,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "name TEXT NOT NULL, " +
             "date TEXT NOT NULL, " +
             "start_time TEXT NOT NULL, " +
-            "end_time TEXT NOT NULL " +
+            "end_time TEXT NOT NULL, " +
+            "created_by TEXT NOT NULL, " +
+            "FOREIGN KEY (created_by) REFERENCES USERS(email) ON DELETE CASCADE" +
             ")";
     private static final String CREATE_TABLE_USERS= "CREATE TABLE IF NOT EXISTS USERS (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "email TEXT NOT NULL, " +
+            "email TEXT UNIQUE, " +
+            "password TEXT NOT NULL, " +
             "status TEXT NOT NULL " +
             ")";
     private static final String CREATE_TABLE_ATTENDANCES= "CREATE TABLE IF NOT EXISTS ATTENDANCES (" +
@@ -70,7 +76,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "first_name TEXT NOT NULL, " +
             "id_number TEXT NOT NULL, " +
             "class_type TEXT NOT NULL, " +
-            "date TEXT NOT NULL " +
+            "date TEXT NOT NULL, " +
+            "FOREIGN KEY (id_number) REFERENCES STUDENT_DATA(id_number) ON DELETE CASCADE" +
+            ")";
+    private static final String CREATE_TABLE_NOTIFICATIONS= "CREATE TABLE IF NOT EXISTS NOTIFICATIONS (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "content TEXT NOT NULL, " +
+            "created_by TEXT NOT NULL, " +
+            "created_at TIMESTAMP, " +
+            "FOREIGN KEY (created_by) REFERENCES USERS(email) ON DELETE CASCADE" +
             ")";
     public DatabaseHelper(Context context)
     {
@@ -87,6 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CALENDAR);
         db.execSQL(CREATE_TABLE_USERS);
         db.execSQL(CREATE_TABLE_ATTENDANCES);
+        db.execSQL(CREATE_TABLE_NOTIFICATIONS);
     }
 
     @Override
@@ -99,6 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS CALENDAR");
         db.execSQL("DROP TABLE IF EXISTS USERS");
         db.execSQL("DROP TABLE IF EXISTS ATTENDANCES");
+        db.execSQL("DROP TABLE IF EXISTS NOTIFICATIONS");
         onCreate(db);
     }
 
@@ -139,26 +155,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(updateChatMessages, new String[]{newEmail, oldEmail});
         String updateUsers = "UPDATE USERS SET email = ? WHERE email = ?";
         db.execSQL(updateUsers, new String[]{newEmail, oldEmail});
+        String updateCalendar = "UPDATE CALENDAR SET created_by = ? WHERE created_by = ?";
+        db.execSQL(updateCalendar, new String[]{newEmail, oldEmail});
+        String updateNotifications = "UPDATE NOTIFICATIONS SET created_by = ? WHERE created_by = ?";
+        db.execSQL(updateNotifications, new String[]{newEmail, oldEmail});
     }
 
     public void updatePassword(String password, String email)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        String updateStudentsData = "UPDATE STUDENT_DATA SET password = ? WHERE email = ?";
-        db.execSQL(updateStudentsData, new String[]{password, email});
-        String updateProfsData = "UPDATE PROF_DATA SET password = ? WHERE email = ?";
-        db.execSQL(updateProfsData, new String[]{password, email});
+        String updateData = "UPDATE USERS SET password = ? WHERE email = ?";
+        db.execSQL(updateData, new String[]{password, email});
     }
 
     public boolean emailExists(String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
-            String query = "SELECT last_name FROM STUDENT_DATA WHERE email = ? " +
-                    "UNION " +
-                    "SELECT last_name FROM PROF_DATA WHERE email = ?";
+            String query = "SELECT id FROM USERS WHERE email = ? " ;
 
-            Cursor cursor = db.rawQuery(query, new String[]{email, email});
+            Cursor cursor = db.rawQuery(query, new String[]{email});
 
             if (cursor.moveToFirst()) {
                 return true;
@@ -187,15 +203,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
-    public void insertProfData(String lastName, String firstName, String email, String password)
+    public void insertProfData(String lastName, String firstName, String email, String identificationNumber)
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try
         {
             db.execSQL(
-                    "INSERT INTO PROF_DATA (last_name, first_name, email, password) VALUES (?, ?, ?, ?)",
-                    new Object[]{lastName, firstName, email, password}
+                    "INSERT INTO PROF_DATA (last_name, first_name, email, identification_number) VALUES (?, ?, ?, ?)",
+                    new Object[]{lastName, firstName, email, identificationNumber}
             );
         }
         finally
@@ -203,15 +219,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
-    public void insertStudentData(String lastName, String firstName, String email, String idNumber, String year, String group, String password)
+    public void insertStudentData(String lastName, String firstName, String email, String idNumber)
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try
         {
             db.execSQL(
-                    "INSERT INTO STUDENT_DATA (last_name, first_name, email, id_number, year, class, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{lastName, firstName, email, idNumber, year, group, password}
+                    "INSERT INTO STUDENT_DATA (last_name, first_name, email, id_number) VALUES (?, ?, ?, ?)",
+                    new Object[]{lastName, firstName, email, idNumber}
             );
         }
         finally
@@ -272,25 +288,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteAccount(String email)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        String deleteStudent = "DELETE FROM STUDENT_DATA WHERE email = ?";
-        String deleteProf    = "DELETE FROM PROF_DATA WHERE email = ?";
-        db.execSQL(deleteStudent, new String[]{email});
-        db.execSQL(deleteProf, new String[]{email});
+        String deleteUser   = "DELETE FROM USERS WHERE email = ?";
+        db.execSQL(deleteUser, new String[]{email});
     }
     public String[] retrieveDataWithEmail(String email)
     {
         String[] info = new String[4];
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT first_name, last_name, password FROM STUDENT_DATA WHERE email = ?"+
+        String query = "SELECT first_name, last_name FROM STUDENT_DATA WHERE email = ?"+
                 "UNION " +
-                "SELECT first_name, last_name, password FROM PROF_DATA WHERE email = ?";
+                "SELECT first_name, last_name FROM PROF_DATA WHERE email = ?";
         Cursor cursor = db.rawQuery(query, new String[]{email, email});
 
         if (cursor.moveToFirst())
         {
             info[0] = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
             info[1] = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
-            info[2] = cursor.getString(cursor.getColumnIndexOrThrow("password"));
         }
         return info;
     }
@@ -300,11 +313,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String password = null;
 
         try {
-            String query = "SELECT password FROM STUDENT_DATA WHERE email = ? " +
-                    "UNION " +
-                    "SELECT password FROM PROF_DATA WHERE email = ?";
+            String query = "SELECT password FROM USERS WHERE email = ? ";
 
-            Cursor cursor = db.rawQuery(query, new String[]{email, email});
+            Cursor cursor = db.rawQuery(query, new String[]{email});
             if (cursor.moveToFirst()) {
                 int columnIndex = cursor.getColumnIndex("password");
                 if (columnIndex >= 0) {
@@ -445,14 +456,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public void addEvent(String name, String date, String startTime, String endTime)
+    public void addEvent(String name, String date, String startTime, String endTime, String createdBy)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         try
         {
             db.execSQL(
-                    "INSERT INTO CALENDAR (name, date, start_time, end_time) VALUES (?, ?, ?, ?)",
-                    new Object[]{name, date, startTime, endTime}
+                    "INSERT INTO CALENDAR (name, date, start_time, end_time, created_by) VALUES (?,?, ?, ?, ?)",
+                    new Object[]{name, date, startTime, endTime, createdBy}
             );
         }
         finally
@@ -490,7 +501,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteEvent(String name, String date, String startHour, String endHour)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        String deleteEvent = "DELETE FROM CALENDAR WHERE name = ? AND date = ? AND start_time = ? AND end_time = ?";
+        String deleteEvent = "DELETE FROM CALENDAR WHERE name = ? AND date = ? AND start_time = ? AND end_time = ? ";
         db.execSQL(deleteEvent, new String[]{name, date, startHour,endHour});
 
     }
@@ -502,7 +513,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(
                     "UPDATE CALENDAR SET name = ?, date = ?, start_time = ?, end_time = ? " +
                             "WHERE name = ? AND date = ? AND start_time = ? AND end_time = ?",
-                    new Object[]{newName, newDate, newStartTime, newEndTime, currentName, currentDate, currentStartTime, currentStartTime}
+                    new Object[]{newName, newDate, newStartTime, newEndTime, currentName, currentDate, currentStartTime, currentEndTime}
             );
         }
         finally
@@ -511,15 +522,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void insertUser(String email, String status)
+    public void insertUser(String email, String status, String password)
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try
         {
             db.execSQL(
-                    "INSERT INTO USERS (email, status) VALUES (?, ?)",
-                    new Object[]{email, status}
+                    "INSERT INTO USERS (email, status, password) VALUES (?, ?, ?)",
+                    new Object[]{email, status, password}
             );
         }
         finally
@@ -634,4 +645,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return attendance;
     }
+    public boolean userAddedEvent(String userEmail, String name, String date, String time) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] parts = time.split("-", 2);
+        String startTime = parts[0].trim();
+        String endTime = parts[1].trim();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT id FROM CALENDAR WHERE created_by = ? AND name = ? AND date = ? AND start_time = ? AND end_time = ?";
+            cursor = db.rawQuery(query, new String[]{userEmail, name, date, startTime, endTime});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                return true;
+            }
+            return false;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+    }
+    public void insertNotification(String content, String createdBy)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try
+        {
+            db.execSQL(
+                    "INSERT INTO NOTIFICATIONS (content, created_by, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
+                    new Object[]{content, createdBy}
+            );
+        }
+        finally
+        {
+            db.close();
+        }
+    }
+    public Notification retrieveNotifications(String email)
+    {
+        Notification notification = new Notification();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT content, created_at FROM NOTIFICATIONS WHERE created_by !=  ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+
+        if (cursor.moveToFirst())
+        {
+            String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
+            String date = cursor.getString(cursor.getColumnIndexOrThrow("created_at"));
+            notification.addNotification(content, date);
+        }
+        return notification;
+    }
+
 }

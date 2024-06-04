@@ -16,7 +16,11 @@ import com.example.licenta.R;
 import com.example.licenta.holder.CalendarEventsHolder;
 import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHolder> {
@@ -50,19 +54,32 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
         holder.nameTextView.setText(name);
         holder.timeTextView.setText(time);
 
-
         if(dbHelper.userIsStudent(currentUser))
         {
             holder.deleteButton.setVisibility(View.GONE);
             holder.editButton.setVisibility(View.GONE);
             holder.attendanceButton.setVisibility(View.VISIBLE);
         }
+
         else
         {
             holder.attendanceButton.setVisibility(View.GONE);
-            holder.deleteButton.setVisibility(View.VISIBLE);
-            holder.editButton.setVisibility(View.VISIBLE);
+            if(dbHelper.userAddedEvent(currentUser, name, date, time))
+            {
+                holder.deleteButton.setEnabled(true);
+                holder.deleteButton.setAlpha(1.0f);
+                holder.editButton.setEnabled(true);
+                holder.editButton.setAlpha(1.0f);
+            }
+            else
+            {
+                holder.deleteButton.setEnabled(false);
+                holder.deleteButton.setAlpha(0.5f);
+                holder.editButton.setEnabled(false);
+                holder.editButton.setAlpha(0.5f);
+            }
         }
+
         holder.deleteButton.setOnClickListener(v -> {
             deleteEvent(name, date, time);
             items.remove(holder.getAdapterPosition());
@@ -91,6 +108,11 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
             holder.attendanceButton.setText("Prezenta marcata");
 
         }
+        if(dateAfterToday(date))
+        {
+            holder.attendanceButton.setEnabled(false);
+            holder.attendanceButton.setAlpha(0.5f);
+        }
         holder.attendanceButton.setOnClickListener(v ->
         {
             dbHelper.insertStudentAttendance(lastName, firstName, idNumber, name, date);
@@ -109,6 +131,26 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
         String startHour = parts[0];
         String endHour = parts[1];
         dbHelper.deleteEvent(name, date, startHour, endHour);
+    }
+
+    private boolean dateAfterToday(String date) {
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            Date selected = sdf.parse(date);
+            if (selected.after(today.getTime()))
+            {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

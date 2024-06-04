@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_corners_background"
     android:layout_margin="10dp"
-    android:elevation="10dp"
+    android:elevation="20dp"
     android:orientation="horizontal"
     >
     <include layout="@layout/picture_layout"

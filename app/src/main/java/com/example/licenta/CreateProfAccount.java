@@ -28,6 +28,7 @@ public class CreateProfAccount extends AppCompatActivity
         EditText editTextLastName = findViewById(R.id.lastname);
         EditText editTextFirstName = findViewById(R.id.firstname);
         EditText editTextEmail = findViewById(R.id.email);
+        EditText editTextIdentificationNb = findViewById(R.id.identificationNb);
         EditText editTextPassword = findViewById(R.id.password);
         EditText editTextConfirmPassword = findViewById(R.id.confirmPassword);
 
@@ -39,6 +40,7 @@ public class CreateProfAccount extends AppCompatActivity
             String email = editTextEmail.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
             String passwordConfirmation = editTextConfirmPassword.getText().toString().trim();
+            String identificationNb = editTextIdentificationNb.getText().toString().trim();
 
             String message;
             message = verifyData(lastName, firstName, email, password, passwordConfirmation);
@@ -48,8 +50,8 @@ public class CreateProfAccount extends AppCompatActivity
                 Toast.makeText(CreateProfAccount.this, message, Toast.LENGTH_SHORT).show();
             } else
             {
-                dbHelper.insertProfData(lastName, firstName, email, password);
-                dbHelper.insertUser(email, "professor");
+                dbHelper.insertProfData(lastName, firstName, email, identificationNb);
+                dbHelper.insertUser(email, "professor", password);
                 Intent login = new Intent(CreateProfAccount.this, LoginPage.class);
                 startActivity(login);
             }

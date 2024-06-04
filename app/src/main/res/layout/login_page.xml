@@ -30,6 +30,8 @@
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/email"
         android:layout_below="@id/loginText"
+        android:gravity="center_vertical"
+        android:padding="10dp"
         android:layout_margin="10dp"
         />
     <EditText
@@ -43,6 +45,8 @@
         android:background="@drawable/rounded_corners_background"
         android:id="@+id/password"
         android:layout_below="@id/email"
+        android:gravity="center_vertical"
+        android:padding="10dp"
         android:layout_margin="10dp"
         />
     <ImageView
@@ -79,6 +83,18 @@
         android:textSize="25dp"
         android:textColor="@color/a1b0c1a"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/createAccount"
+        android:layout_below="@id/forgotpassword"
+        android:text="Nu ai cont? Creeaza unul!"
+        android:textStyle="italic"
+        android:textSize="25dp"
+        android:textColor="@color/a765d67"
+        android:layout_centerHorizontal="true"
         android:background="@android:color/transparent"/>
 </RelativeLayout>

@@ -8,78 +8,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".NotificationsPage"
     >
-
-    <ImageView
-        android:id="@+id/notifIcon"
-        android:layout_width="84dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/baseline_calendar_month_24" />
-
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/notifMessage"
-        android:text="Un nou eveniment a fost adaugat in calendar"
+        android:id="@+id/message_view"
+        android:text="Notificari"
+        android:textSize="25dp"
+        android:textStyle="bold|italic"
         android:textColor="@color/fadcd5"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/notifIcon"
-        android:layout_alignTop="@id/notifIcon"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/notifications_viewer"
+        android:layout_below="@+id/message_view"
+        android:layout_marginTop = "20dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="25dp"/>
-
-    <ImageView
-        android:id="@+id/notifIcon1"
-        android:layout_width="84dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="2dp"
-        android:src="@drawable/baseline_calendar_month_24"
-        app:tint="@color/a1b0c1a"
-        android:layout_below="@+id/notifMessage"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/notifMessage1"
-        android:text="Un nou eveniment a fost adaugat in calendar"
-        android:textColor="@color/fadcd5"
-        android:textStyle="italic"
-        android:textSize="20dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/notifIcon1"
-        android:layout_alignTop="@id/notifIcon1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="25dp"/>
-
-
-    <ImageView
-        android:id="@+id/notifIcon2"
-        android:layout_width="84dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="2dp"
-        android:src="@drawable/baseline_calendar_month_24"
-        app:tint="@color/a1b0c1a"
-        android:layout_below="@+id/notifMessage1"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/notifMessage2"
-        android:text="Un nou eveniment a fost adaugat in calendar"
-        android:textColor="@color/fadcd5"
-        android:textStyle="italic"
-        android:textSize="20dp"
-        android:background="@color/material_on_surface_stroke"
-        android:layout_toEndOf="@id/notifIcon2"
-        android:layout_alignTop="@id/notifIcon2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="25dp"/>
+        android:background="@android:color/transparent"
+        />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"

@@ -45,7 +45,7 @@
         android:layout_below="@+id/search"
         android:layout_marginTop = "20dp"
         android:layout_marginLeft="5dp"
-        android:background="@drawable/gradient_background_menu"
+        android:background="@android:color/transparent"
         />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

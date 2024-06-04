@@ -33,6 +33,7 @@ public class LoginPage extends AppCompatActivity {
 
         Button forgotPassBtn = findViewById(R.id.forgotpassword);
         Button loginBtn = findViewById(R.id.loginBtn);
+        Button createAccountBtn = findViewById(R.id.createAccount);
 
         ImageView seePassword = findViewById(R.id.seePassword);
         seePassword.setImageResource(R.drawable.see_password);
@@ -93,6 +94,12 @@ public class LoginPage extends AppCompatActivity {
                     startActivity(forgotPassword);
                 }
                 else
+                if (v.getId() == R.id.createAccount)
+                {
+                    Intent intent = new Intent(LoginPage.this, CreateAccountPage.class);
+                    startActivity(intent);
+                }
+                else
                 {
                     throw new IllegalArgumentException("Unknown button");
                 }
@@ -101,6 +108,7 @@ public class LoginPage extends AppCompatActivity {
 
         forgotPassBtn.setOnClickListener(buttonClickListener);
         loginBtn.setOnClickListener(buttonClickListener);
+        createAccountBtn.setOnClickListener(buttonClickListener);
     }
 
     public String rightPasswordWasIntroduced(String pass1, String pass2)

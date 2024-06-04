@@ -11,12 +11,14 @@
         android:id="@+id/createAccount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="100dp"
-        android:gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="150dp"
         android:text="Creeaza cont"
         android:textColor="@color/a765d67"
         android:textSize="30dp"
-        android:textStyle="bold|italic"/>
+        android:textStyle="bold|italic"
+        android:gravity="center_vertical"
+        android:padding="20dp"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
@@ -29,7 +31,9 @@
         android:backgroundTint="@color/a2d222f"
         android:id="@+id/createProfAccBtn"
         android:layout_below="@id/createAccount"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:layout_margin="10dp"/>
     <TextView
         android:id="@+id/or"
         android:layout_width="wrap_content"
@@ -50,6 +54,8 @@
         android:backgroundTint="@color/a2d222f"
         android:id="@+id/createStudAccBtn"
         android:layout_below="@id/or"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:layout_margin="10dp"/>
 
 </RelativeLayout>

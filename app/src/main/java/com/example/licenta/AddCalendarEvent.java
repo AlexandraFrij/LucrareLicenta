@@ -23,7 +23,7 @@ public class AddCalendarEvent extends AppCompatActivity
     TextView startHourView, endHourView;
     Button addEventBtn, giveUpBtn;
     int startHour, startMinute, endHour, endMinute;
-    String selectedDate;
+    String selectedDate, email;
 
     private DatabaseHelper dbHelper;
     @Override
@@ -39,6 +39,7 @@ public class AddCalendarEvent extends AppCompatActivity
         giveUpBtn = findViewById(R.id.giveUpBtn);
 
         selectedDate = getIntent().getStringExtra("date");
+        email = getIntent().getStringExtra("userEmail");
         eventDateView.setText(selectedDate);
         startHourView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +76,9 @@ public class AddCalendarEvent extends AppCompatActivity
                     } else {
                         String startTime = String.format(Locale.getDefault(), "%02d:%02d", startHour, startMinute);
                         String endTime = String.format(Locale.getDefault(), "%02d:%02d", endHour, endMinute);
-                        dbHelper.addEvent(event, selectedDate, startTime, endTime);
+                        dbHelper.addEvent(event, selectedDate, startTime, endTime,email);
+                        String content = event + " " + selectedDate ;
+                        dbHelper.insertNotification(content, email);
                         eventNameView.setText("");
                         eventNameView.setHint("Descriere eveniment");
                         startHourView.setText("Ora de inceput");

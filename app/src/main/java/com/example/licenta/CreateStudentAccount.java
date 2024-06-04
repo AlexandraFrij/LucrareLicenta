@@ -30,8 +30,6 @@ public class CreateStudentAccount extends AppCompatActivity
         EditText editTextFirstName = findViewById(R.id.firstname);
         EditText editTextEmail = findViewById(R.id.email);
         EditText editTextIdNumber = findViewById(R.id.studIDNum);
-        EditText editTextYear = findViewById(R.id.year);
-        EditText editTextGroup = findViewById(R.id.group);
         EditText editTextPassword = findViewById(R.id.password);
         EditText editTextConfirmPassword = findViewById(R.id.confirmPassword);
 
@@ -42,19 +40,17 @@ public class CreateStudentAccount extends AppCompatActivity
             String firstName = editTextFirstName.getText().toString().trim();
             String email = editTextEmail.getText().toString().trim();
             String idNumber = editTextIdNumber.getText().toString().trim();
-            String year = editTextYear.getText().toString().trim();
-            String group = editTextGroup.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
             String passwordConfirmation = editTextConfirmPassword.getText().toString().trim();
 
             String message;
-            message = verifyData(lastName, firstName, email, idNumber, year, group, password, passwordConfirmation);
+            message = verifyData(lastName, firstName, email, idNumber, password, passwordConfirmation);
             if (!message.equals("ok"))
             {
                 Toast.makeText(CreateStudentAccount.this, message, Toast.LENGTH_SHORT).show();
             } else {
-                dbHelper.insertStudentData(lastName, firstName, email, idNumber, year, group, password);
-                dbHelper.insertUser(email, "student");
+                dbHelper.insertStudentData(lastName, firstName, email, idNumber);
+                dbHelper.insertUser(email, "student", password);
                 Intent login = new Intent(CreateStudentAccount.this, LoginPage.class);
                 startActivity(login);
             }
@@ -62,7 +58,7 @@ public class CreateStudentAccount extends AppCompatActivity
 
     }
 
-    public String verifyData(String lastName, String firstName, String email, String idNumber, String year, String group, String pass1, String pass2)
+    public String verifyData(String lastName, String firstName, String email, String idNumber, String pass1, String pass2)
     {
         String s = verifyName(lastName, firstName);
         if (!s.equals("ok"))
@@ -71,9 +67,6 @@ public class CreateStudentAccount extends AppCompatActivity
         if (!s.equals("ok"))
             return s;
         s = verifyIdNumber(idNumber);
-        if (!s.equals("ok"))
-            return s;
-        s = verifyYearAndGroup(year, group);
         if (!s.equals("ok"))
             return s;
         s = verifyPassword(pass1, pass2);
@@ -126,16 +119,4 @@ public class CreateStudentAccount extends AppCompatActivity
         return "ok";
     }
 
-    public String verifyYearAndGroup(String year, String group)
-    {
-        String regex1 = "^(L[1-3]|M[1-2])$";
-        String regex2 = "^(A[1-9]|B[1-9]|E[1-9])$";
-        Pattern pattern1 = Pattern.compile(regex1);
-        if (!pattern1.matcher(year).matches())
-            return "An de studii invalid!";
-        Pattern pattern2 = Pattern.compile(regex2);
-        if (!pattern2.matcher(group).matches())
-            return "Grupa invalida!";
-        return "ok";
-    }
 }

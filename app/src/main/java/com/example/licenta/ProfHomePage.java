@@ -1,6 +1,5 @@
 package com.example.licenta;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
-
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,13 +21,12 @@ import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
 import com.example.licenta.model.CalendarEvent;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
 
 public class ProfHomePage extends AppCompatActivity {
     TextView usernameText;
@@ -57,26 +54,26 @@ public class ProfHomePage extends AppCompatActivity {
         usernameText.setText(info[1]);
         emailText.setText(userEmail);
 
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         selectedDate = sdf.format(new Date(calendar.getDate()));
         showEvents();
-        addEventButton.setText("Adauga eveniment pentru "+ selectedDate);
+        addEventButton.setText("Adauga eveniment pentru " + selectedDate);
 
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                checkDateAndDisableButton();
                 showEvents();
-                addEventButton.setText("Adauga eveniment pentru "+ selectedDate);
+                addEventButton.setText("Adauga eveniment pentru " + selectedDate);
             }
         });
-
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProfHomePage.this, AddCalendarEvent.class);
                 intent.putExtra("date", selectedDate);
+                intent.putExtra("userEmail", userEmail);
                 startActivity(intent);
             }
         });
@@ -98,6 +95,8 @@ public class ProfHomePage extends AppCompatActivity {
                 startActivity(profile);
             }
         });
+
+        checkDateAndDisableButton();
     }
 
     protected boolean onNavigationItemSelectedHandler(MenuItem item) {
@@ -127,5 +126,26 @@ public class ProfHomePage extends AppCompatActivity {
         calendarView.setLayoutManager(new LinearLayoutManager(ProfHomePage.this));
         calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
     }
-}
 
+    private void checkDateAndDisableButton() {
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            Date selected = sdf.parse(selectedDate);
+            if (selected.before(today.getTime())) {
+                addEventButton.setEnabled(false);
+                addEventButton.setAlpha(0.5f);
+            } else {
+                addEventButton.setEnabled(true);
+                addEventButton.setAlpha(1.0f);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
