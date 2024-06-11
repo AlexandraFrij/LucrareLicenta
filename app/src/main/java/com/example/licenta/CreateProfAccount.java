@@ -15,11 +15,11 @@ import android.widget.Toast;
 public class CreateProfAccount extends AppCompatActivity
 {
 
-    private DatabaseHelper dbHelper;
+    private FirebaseHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -93,16 +93,26 @@ public class CreateProfAccount extends AppCompatActivity
         return "ok";
     }
 
-    public String verifyEmail(String email)
-    {
-        if (dbHelper.emailExists(email))
-            return "Adresa de e-mail aflata in folosinta!";
-        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(email).matches())
-            return "E-mail invalid!";
-        return "ok";
+    public String verifyEmail(String email) {
+        String[] message = new String[] {"ok"};
+        dbHelper.emailExists(email).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean exists = task.getResult();
+                if (exists) {
+                    message[0]= "Adresa de e-mail aflata in folosinta!";
+                }
+                else {
+                    String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+                    Pattern pattern = Pattern.compile(regex);
+                    if (!pattern.matcher(email).matches()) {
+                        message[0]= "E-mail invalid!";
+                    }
+                }
+            }
+        });
+        return message[0];
     }
+
 
 
 }

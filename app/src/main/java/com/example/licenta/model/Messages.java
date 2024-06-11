@@ -1,6 +1,6 @@
 package com.example.licenta.model;
 
-import java.sql.Timestamp;
+import com.google.firebase.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

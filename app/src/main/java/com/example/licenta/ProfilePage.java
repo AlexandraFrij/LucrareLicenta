@@ -13,12 +13,13 @@ import android.widget.Toast;
 
 public class ProfilePage extends AppCompatActivity {
 
-    private DatabaseHelper dbHelper;
+    private FirebaseHelper dbHelper;
+    private String userStatus, userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_page);
@@ -31,11 +32,26 @@ public class ProfilePage extends AppCompatActivity {
         TextView emailAddress = findViewById(R.id.profileEmail);
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        String email = sp.getString("email", null);
-        String[] data = dbHelper.retrieveDataWithEmail(email);
-        String username = data[0] + " " + data[1];
-        name.setText(username);
-        emailAddress.setText(email);
+        userEmail = sp.getString("email", null);
+        userStatus = sp.getString("status", null);
+
+        dbHelper.retrieveDataWithEmail(userEmail)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String[] info = task.getResult();
+                        if (info != null) {
+                            String username = info[0] + " " + info[1];
+                            name.setText(username);
+                            emailAddress.setText(userEmail);
+                        }
+
+                    } else {
+                        Exception e = task.getException();
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
         View.OnClickListener buttonClickListener = v -> {
             if (v.getId() == R.id.logoffBtn)
@@ -52,13 +68,20 @@ public class ProfilePage extends AppCompatActivity {
             else
             if (v.getId() == R.id.goBackBtn)
             {
-                Intent home = new Intent(ProfilePage.this, ProfHomePage.class);
-                startActivity(home);
+                if(userStatus.equals("professor"))
+                {
+                    Intent home = new Intent(ProfilePage.this, ProfHomePage.class);
+                    startActivity(home);
+                }
+                else {
+                    Intent home = new Intent(ProfilePage.this, StudentHomePage.class);
+                    startActivity(home);
+                }
             }
             else
             if (v.getId() == R.id.deleteAccBtn)
             {
-                dbHelper.deleteAccount(email);
+                dbHelper.deleteAccount(userEmail);
                 Toast.makeText(ProfilePage.this, "Cont sters!", Toast.LENGTH_LONG).show();
                 Intent signIn = new Intent(ProfilePage.this, LoginPage.class);
                 startActivity(signIn);

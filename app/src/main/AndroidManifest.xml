@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.licenta">
 
     <application
         android:allowBackup="true"
@@ -14,29 +15,29 @@
         tools:targetApi="31">
         <activity
             android:name=".LoginPage"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <activity android:name=".CreateAccountPage" android:exported="true" />
-    <activity android:name=".ChatPage" android:exported="true"/>
-    <activity android:name=".ConversationsPage" android:exported="true" />
-    <activity android:name=".CreateProfAccount" android:exported="true" />
-    <activity android:name=".CreateStudentAccount" android:exported="true"/>
-    <activity android:name=".EditProfilePage" android:exported="true" />
-    <activity android:name=".ProfHomePage" android:exported="true" />
-    <activity android:name=".StudentHomePage" android:exported="true" />
-    <activity android:name=".NotificationsPage" android:exported="true"/>
-    <activity android:name=".ProfilePage" android:exported="true"/>
-    <activity android:name=".ForgotPasswordPage" android:exported="true"/>
-    <activity android:name=".ResetPassword" android:exported="true"/>
-    <activity android:name=".SearchUser" android:exported="true"/>
-    <activity android:name=".AddCalendarEvent" android:exported="true"/>
-    <activity android:name=".EditCalendarEvent" android:exported="true"/>
-    <activity android:name=".StudentAttendances" android:exported="true"/>
+        <activity android:name=".CreateAccountPage" android:exported="true" />
+        <activity android:name=".ChatPage" android:exported="true"/>
+        <activity android:name=".ConversationsPage" android:exported="true" />
+        <activity android:name=".CreateProfAccount" android:exported="true" />
+        <activity android:name=".CreateStudentAccount" android:exported="true"/>
+        <activity android:name=".EditProfilePage" android:exported="true" />
+        <activity android:name=".ProfHomePage" android:exported="true" />
+        <activity android:name=".StudentHomePage" android:exported="true" />
+        <activity android:name=".NotificationsPage" android:exported="true"/>
+        <activity android:name=".ProfilePage" android:exported="true"/>
+        <activity android:name=".ForgotPasswordPage" android:exported="true"/>
+        <activity android:name=".ResetPassword" android:exported="true"/>
+        <activity android:name=".SearchUser" android:exported="true"/>
+        <activity android:name=".AddCalendarEvent" android:exported="true"/>
+        <activity android:name=".EditCalendarEvent" android:exported="true"/>
+        <activity android:name=".StudentAttendances" android:exported="true"/>
 
     </application>
-    </manifest>
+</manifest>

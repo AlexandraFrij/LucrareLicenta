@@ -20,12 +20,41 @@
         android:layout_marginTop="15dp"
         android:gravity="center"
         />
+    <EditText
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:id="@+id/addAnnouncement"
+        android:background="@drawable/rounded_corners_background"
+        android:drawableTint="@color/fadcd5"
+        android:text="Adauga un anunt!"
+        android:textStyle="italic"
+        android:layout_below="@+id/message_view"
+        android:textColor="@color/fadcd5"
+        android:elevation="20dp"
+        android:layout_margin="4dp"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical|start"
+        android:padding="10dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:drawableStart="@drawable/baseline_add_circle_24"
+        android:drawableTint="@color/fadcd5"
+        android:id="@+id/addAnnouncementBtn"
+        android:background="@drawable/rounded_corners_background"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/message_view"
+        android:gravity="center"
+        android:padding="13dp"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/notifications_viewer"
-        android:layout_below="@+id/message_view"
+        android:paddingBottom="60dp"
+        android:layout_below="@+id/addAnnouncement"
         android:layout_marginTop = "20dp"
         android:layout_marginLeft="5dp"
         android:background="@android:color/transparent"

@@ -50,6 +50,18 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="10dp"
         />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noMessagesTextView"
+        android:background="@color/a2d222f"
+        android:layout_below="@id/other_username"
+        android:layout_above="@id/message_input"
+        android:text="Niciun mesaj gasit"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:textSize="20dp"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

@@ -5,12 +5,12 @@ import java.util.List;
 
 public class ChatRoom {
     public List<String> otherUserEmail;
-    public List<Integer> chatRoomId;
+    public List<String> chatRoomId;
     public List<String> userEmail;
 
     public ChatRoom() {
         this.otherUserEmail = new ArrayList<String>();
-        this.chatRoomId = new ArrayList<Integer>();
+        this.chatRoomId = new ArrayList<String>();
         userEmail = new ArrayList<String>();
     }
 
@@ -18,14 +18,14 @@ public class ChatRoom {
         return otherUserEmail;
     }
 
-    public List<Integer> getChatRoomId() {
+    public List<String> getChatRoomId() {
         return chatRoomId;
     }
 
     public List<String> getUserEmail() {
         return userEmail;
     }
-    public void addChatRoom(String userEmail, String otherUserEmail, int id)
+    public void addChatRoom(String userEmail, String otherUserEmail, String id)
     {
         this.otherUserEmail.add(otherUserEmail);
         this.userEmail.add(userEmail);

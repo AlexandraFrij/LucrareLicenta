@@ -32,28 +32,42 @@ public class ProfHomePage extends AppCompatActivity {
     TextView usernameText;
     TextView emailText;
     CalendarView calendar;
-    Button addEventButton;
+    Button addEventButton, seeAttendancesList;
     String selectedDate;
     String userEmail;
 
-    private DatabaseHelper dbHelper;
+    private FirebaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.prof_home_page);
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
         usernameText = findViewById(R.id.username);
         emailText = findViewById(R.id.email);
         calendar = findViewById(R.id.calendar);
         addEventButton = findViewById(R.id.addEventBtn);
+        seeAttendancesList = findViewById(R.id.seeAttendancesList);
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         userEmail = sp.getString("email", null);
-        String[] info = dbHelper.retrieveDataWithEmail(userEmail);
-        usernameText.setText(info[1]);
-        emailText.setText(userEmail);
+        dbHelper.retrieveDataWithEmail(userEmail)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String[] info = task.getResult();
+                        if (info != null) {
+                            usernameText.setText(info[1]);
 
+                        }
+
+                    } else {
+                        Exception e = task.getException();
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        emailText.setText(userEmail);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         selectedDate = sdf.format(new Date(calendar.getDate()));
         showEvents();
@@ -76,6 +90,12 @@ public class ProfHomePage extends AppCompatActivity {
                 intent.putExtra("userEmail", userEmail);
                 startActivity(intent);
             }
+        });
+        seeAttendancesList.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(ProfHomePage.this, StudentAttendances.class);
+            intent.putExtra("lastPage", "ProfHomePage");
+            startActivity(intent);
         });
 
         BottomNavigationView bottomNavBar = findViewById(R.id.bottom_nav_bar);
@@ -115,16 +135,26 @@ public class ProfHomePage extends AppCompatActivity {
 
     private void showEvents() {
         RecyclerView calendarView = findViewById(R.id.events_viewer);
-        CalendarEvent items = dbHelper.extractCalendarEvents(selectedDate);
-        List<String> name = items.getName();
-        List<String> date = items.getDate();
-        List<String> time = items.getTime();
-        List<CalendarEventsRecyclerViewerItem> events = new ArrayList<>();
-        for (int i = 0; i < name.size(); i++) {
-            events.add(new CalendarEventsRecyclerViewerItem(name.get(i), date.get(i), time.get(i)));
-        }
-        calendarView.setLayoutManager(new LinearLayoutManager(ProfHomePage.this));
-        calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
+        dbHelper.extractCalendarEvents(selectedDate)
+                .addOnSuccessListener(calendar -> {
+                   if(calendar != null)
+                   {
+                       CalendarEvent items = calendar;
+                       List<String> name = items.getName();
+                       List<String> date = items.getDate();
+                       List<String> time = items.getTime();
+                       List<String> room = items.getRoom();
+                       List<CalendarEventsRecyclerViewerItem> events = new ArrayList<>();
+                       for (int i = 0; i < name.size(); i++) {
+                           events.add(new CalendarEventsRecyclerViewerItem(name.get(i), date.get(i), time.get(i), room.get(i)));
+                       }
+                       calendarView.setLayoutManager(new LinearLayoutManager(ProfHomePage.this));
+                       calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
+
+                   }
+
+                });
+
     }
 
     private void checkDateAndDisableButton() {

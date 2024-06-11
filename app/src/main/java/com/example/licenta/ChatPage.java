@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,25 +18,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.adapter.ChatAdapter;
 import com.example.licenta.item.ChatRecyclerViewItem;
-import com.example.licenta.model.Messages;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatPage extends AppCompatActivity
-{
-    private DatabaseHelper dbHelper;
+public class ChatPage extends AppCompatActivity {
+    private FirebaseHelper dbHelper;
     private RecyclerView messagesView;
+    private TextView noMessagesView;
     private String currentUserEmail;
     private String otherUserEmail;
 
+    private static final String TAG = "ChatPage";
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_page);
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
 
         Button goBackBtn = findViewById(R.id.goBackBtn);
         ImageButton send = findViewById(R.id.sendBtn);
@@ -51,9 +54,10 @@ public class ChatPage extends AppCompatActivity
         int photo = intent.getIntExtra("photo", -1);
         otherUserEmail = intent.getStringExtra("email");
 
+        noMessagesView = findViewById(R.id.noMessagesTextView);
+
         otherUsername.setText(username);
         profilePicture.setImageResource(photo);
-        createChatRoom(currentUserEmail, otherUserEmail);
 
         messagesView = findViewById(R.id.messages);
         messagesView.setLayoutManager(new LinearLayoutManager(this));
@@ -74,7 +78,6 @@ public class ChatPage extends AppCompatActivity
                     sendMessage(message, currentUserEmail, otherUserEmail);
                     userMessage.setText("");
                     displayMessages(currentUserEmail, otherUserEmail, messagesView);
-
                 }
             }
         });
@@ -82,39 +85,65 @@ public class ChatPage extends AppCompatActivity
         displayMessages(currentUserEmail, otherUserEmail, messagesView);
     }
 
-    public void createChatRoom(String user1Email, String user2Email)
-    {
-        if (!dbHelper.chatRoomExists(user1Email, user2Email))
-            dbHelper.insertChatRoom(user1Email, user2Email);
+    public void createChatRoom(String user1Email, String user2Email) {
+        dbHelper.insertChatRoom(user1Email, user2Email);
     }
 
     public void sendMessage(String message, String senderEmail, String receiverEmail) {
-        int chatRoomId = dbHelper.retrieveChatRoomId(senderEmail, receiverEmail);
-        dbHelper.insertChatMessage(chatRoomId, senderEmail, message);
-        RecyclerView messagesView = findViewById(R.id.messages);
-        displayMessages(senderEmail, receiverEmail, messagesView);
+        dbHelper.retrieveChatRoomId(senderEmail, receiverEmail)
+                .addOnSuccessListener(chatRoomId -> {
+                    if (chatRoomId != null) {
+                        dbHelper.insertChatMessage(chatRoomId, senderEmail, message);
+                        RecyclerView messagesView = findViewById(R.id.messages);
+                        displayMessages(senderEmail, receiverEmail, messagesView);
+                    }
+                });
     }
 
-
-    public void displayMessages(String currentUserEmail, String otherUserEmail, RecyclerView messagesView)
-    {
-        int chatRoomId = dbHelper.retrieveChatRoomId(currentUserEmail, otherUserEmail);
-        Messages messages = dbHelper.extractMessages(chatRoomId);
-        List<String> senderList = messages.getSender();
-        List<String> messageList = messages.getMessages();
-        List<ChatRecyclerViewItem> chatItems = new ArrayList<>();
-        for (int i = 0; i < senderList.size(); i++) {
-            String sender = senderList.get(i);
-            String message = messageList.get(i);
-            chatItems.add(new ChatRecyclerViewItem(message, sender));
-        }
-        ChatAdapter chatAdapter = new ChatAdapter(this, chatItems, currentUserEmail);
-        messagesView.setLayoutManager(new LinearLayoutManager(ChatPage.this));
-        messagesView.setAdapter(chatAdapter);
-
-        if (chatItems.size() > 0) {
-            messagesView.scrollToPosition(chatItems.size() - 1);
-        }
+    public void displayMessages(String currentUserEmail, String otherUserEmail, RecyclerView messagesView) {
+        Log.d(TAG, "Inainte de retrieve chatRoomId");
+        dbHelper.retrieveChatRoomId(currentUserEmail, otherUserEmail)
+                .addOnSuccessListener(chatRoomId -> {
+                    if (chatRoomId != null && !chatRoomId.isEmpty()) {
+                        Log.d(TAG, "Inainte de retrieve displayChatMessages, "+ chatRoomId);
+                        displayChatMessages(chatRoomId);
+                    } else {
+                        Log.d(TAG, "Inainte de retrieve createChatRoom");
+                        createChatRoom(currentUserEmail, otherUserEmail);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error retrieving chat room ID", e));
     }
 
+    private void displayChatMessages(String chatRoomId) {
+        Log.d(TAG, "Inainte de extractMessages");
+        dbHelper.extractMessages(chatRoomId)
+                .addOnSuccessListener(messages -> {
+                    if (messages != null) {
+                        Log.d(TAG, "In if messages != null");
+                        List<String> senderList = messages.getSender();
+                        List<String> messageList = messages.getMessages();
+                        List<ChatRecyclerViewItem> chatItems = new ArrayList<>();
+                        for (int i = 0; i < senderList.size(); i++) {
+                            String sender = senderList.get(i);
+                            String message = messageList.get(i);
+                            chatItems.add(new ChatRecyclerViewItem(message, sender));
+                        }
+                        if (chatItems.isEmpty()) {
+                            Log.d(TAG, "In if (chatItems.isEmpty())");
+//                            messagesView.setVisibility(View.GONE);
+//                            noMessagesView.setVisibility(View.VISIBLE);
+                        } else {
+                            Log.d(TAG, "In else dupa if (chatItems.isEmpty())");
+//                            noMessagesView.setVisibility(View.GONE);
+//                            messagesView.setVisibility(View.VISIBLE);
+                            ChatAdapter chatAdapter = new ChatAdapter(this, chatItems, currentUserEmail);
+                            messagesView.setLayoutManager(new LinearLayoutManager(ChatPage.this));
+                            messagesView.setAdapter(chatAdapter);
+                            messagesView.scrollToPosition(chatItems.size() - 1);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error extracting messages", e));
+    }
 }

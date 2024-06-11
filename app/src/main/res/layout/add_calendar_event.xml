@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop = "50dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="100dp"
         android:text="Adaugare eveniment"
         android:textColor="@color/a765d67"
         android:textSize="30dp"
@@ -79,6 +79,21 @@
         android:gravity="center_vertical"
         android:padding="10dp"
         />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Sala eveniment:"
+        android:textColorHint="@color/a1b0c1a"
+        android:textSize="20dp"
+        android:textStyle="italic"
+        android:textColor="@color/a1b0c1a"
+        android:background="@drawable/rounded_corners_background"
+        android:id="@+id/eventRoom"
+        android:layout_below="@id/endHour"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,7 +101,7 @@
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:layout_below="@+id/endHour"
+        android:layout_below="@+id/eventRoom"
         android:layout_marginTop="20dp">
 
         <com.google.android.material.button.MaterialButton

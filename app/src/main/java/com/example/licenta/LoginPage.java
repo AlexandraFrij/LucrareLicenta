@@ -13,16 +13,25 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.licenta.adapter.CalendarEventAdapter;
+import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
+import com.example.licenta.model.CalendarEvent;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class LoginPage extends AppCompatActivity {
     String email;
 
-    private DatabaseHelper dbHelper;
+    private FirebaseHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
         SharedPreferences sp = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
 
         super.onCreate(savedInstanceState);
@@ -62,29 +71,37 @@ public class LoginPage extends AppCompatActivity {
                 {
                     email = editTextEmail.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
-
-                    String pass = dbHelper.extractPasswordUsingEmail(email);
-                    String message = rightPasswordWasIntroduced(pass, password);
-                    if (! message.equals("ok"))
-                        Toast.makeText(LoginPage.this, message, Toast.LENGTH_SHORT).show();
-                    else
-                    {
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putString("email", email);
-                        editor.commit();
-
-                        if(dbHelper.userIsStudent(email))
-                        {
-                            Intent home = new Intent(LoginPage.this, StudentHomePage.class);
-                            startActivity(home);
-                        }
-                        else
-                        {
-                            Intent home = new Intent(LoginPage.this, ProfHomePage.class);
-                            startActivity(home);
-                        }
-
-                    }
+                    Snackbar.make(editTextPassword, "Sunt inainte de apel bd", Snackbar.LENGTH_SHORT).show();
+                    dbHelper.extractPasswordUsingEmail(email)
+                            .addOnSuccessListener(p -> {
+                                if (p != null) {
+                                    String pass = p;
+                                    String message = rightPasswordWasIntroduced(pass, password);
+                                    if (!message.equals("ok")) {
+                                        Snackbar.make(editTextPassword, message, Snackbar.LENGTH_SHORT).show();
+                                    } else {
+                                        SharedPreferences.Editor editor = sp.edit();
+                                        editor.putString("email", email);
+                                        editor.commit();
+                                        dbHelper.userIsStudent(email)
+                                                .addOnSuccessListener(bool -> {
+                                                    if (bool) {
+                                                        editor.putString("status", "student");
+                                                        editor.commit();
+                                                        Intent home = new Intent(LoginPage.this, StudentHomePage.class);
+                                                        startActivity(home);
+                                                    } else {
+                                                        editor.putString("status", "professor");
+                                                        editor.commit();
+                                                        Intent home = new Intent(LoginPage.this, ProfHomePage.class);
+                                                        startActivity(home);
+                                                    }
+                                                });
+                                    }
+                                } else {
+                                    Snackbar.make(editTextEmail, "Adresa de e-mail nu exista!", Snackbar.LENGTH_SHORT).show();
+                                }
+                            });
 
                 }
                 else

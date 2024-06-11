@@ -1,6 +1,7 @@
 package com.example.licenta;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,12 +16,12 @@ import android.widget.Toast;
 public class CreateStudentAccount extends AppCompatActivity
 {
 
-    private DatabaseHelper dbHelper;
+    private FirebaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -97,26 +98,42 @@ public class CreateStudentAccount extends AppCompatActivity
         return "ok";
     }
 
-    public String verifyEmail(String email)
-    {
-        if (dbHelper.emailExists(email))
-            return "Adresa de e-mail aflata in folosinta!";
-        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(email).matches())
-            return "E-mail invalid!";
-        return "ok";
+    public String verifyEmail(String email) {
+        String[] message = new String[] {"ok"};
+        dbHelper.emailExists(email).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean exists = task.getResult();
+                if (exists) {
+                    message[0]= "Adresa de e-mail aflata in folosinta!";
+                }
+                else {
+                    String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+                    Pattern pattern = Pattern.compile(regex);
+                    if (!pattern.matcher(email).matches()) {
+                        message[0]= "E-mail invalid!";
+                    }
+                }
+            }
+        });
+        return message[0];
     }
 
     public String verifyIdNumber(String idNumber)
     {
-        if (dbHelper.idNumberExists(idNumber))
-            return "Numar matricol aflat in folosinta!";
+        String[] message = new String[] {"ok"};
+        dbHelper.idNumberExists(idNumber).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean exists = task.getResult();
+                if (exists) {
+                    message[0]= "Numar matricol aflat in folosinta!";
+                }
+            }
+        });
         String regex = "^310910401(RSL|ESL)\\d{6}$";
         Pattern pattern = Pattern.compile(regex);
         if (!pattern.matcher(idNumber).matches())
-            return "Numar matricol invalid!";
-        return "ok";
+            message[0] = "Numar matricol invalid!";
+        return message[0];
     }
 
 }

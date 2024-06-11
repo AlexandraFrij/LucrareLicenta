@@ -10,13 +10,17 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:id="@+id/scrollView"
+        android:clipToPadding="false"
+        android:paddingBottom="56dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:id="@+id/linearLayout">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -84,7 +88,23 @@
                     android:gravity="center_vertical|start"
                     android:paddingStart="90dp"
                     android:paddingEnd="16dp" />
-
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/seeAttendancesList"
+                    android:layout_marginTop="5dp"
+                    android:drawableStart="@drawable/baseline_check_circle_24"
+                    android:background="@drawable/rounded_corners_background"
+                    android:drawableTint="@color/fadcd5"
+                    android:text="Vezi prezente studenti"
+                    android:layout_below="@+id/addEventBtn"
+                    android:textStyle="italic"
+                    android:textColor="@color/fadcd5"
+                    android:elevation="20dp"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical|start"
+                    android:paddingStart="90dp"
+                    android:paddingEnd="16dp" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -94,7 +114,7 @@
                     android:id="@+id/todayEvents"
                     android:gravity="center"
                     android:textSize="20dp"
-                    android:layout_below="@+id/addEventBtn"
+                    android:layout_below="@+id/seeAttendancesList"
                     android:layout_marginTop="15dp" />
             </RelativeLayout>
 
@@ -103,6 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp" />
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

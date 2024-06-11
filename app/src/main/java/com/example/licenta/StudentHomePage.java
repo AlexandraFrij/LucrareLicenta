@@ -40,14 +40,14 @@ public class StudentHomePage extends AppCompatActivity {
     String selectedDate;
     String userEmail;
 
-    private DatabaseHelper dbHelper;
+    private FirebaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.student_home_page);
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new FirebaseHelper();
         usernameText = findViewById(R.id.username);
         idNumberText = findViewById(R.id.idNumber);
         calendar = findViewById(R.id.calendar);
@@ -55,11 +55,31 @@ public class StudentHomePage extends AppCompatActivity {
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         userEmail = sp.getString("email", null);
-        String[] info = dbHelper.retrieveDataWithEmail(userEmail);
-        usernameText.setText(info[1]);
-        String idNumber = dbHelper.retrieveIdNumber(userEmail);
-        idNumberText.setText(idNumber);
+        dbHelper.retrieveDataWithEmail(userEmail)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String[] info = task.getResult();
+                        if (info != null) {
+                            usernameText.setText(info[1]);
+                        }
 
+                    } else {
+                        Exception e = task.getException();
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        String[] idNumber = new String[]{""};
+        dbHelper.retrieveIdNumber(userEmail)
+                .addOnSuccessListener(idNb -> {
+                    if(idNb != null)
+                    {
+                        idNumberText.setText(idNb);
+                        idNumber[0] = idNb;
+                    }
+                });
+        idNumberText.setText(idNumber[0]);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         selectedDate = sdf.format(new Date(calendar.getDate()));
@@ -76,7 +96,8 @@ public class StudentHomePage extends AppCompatActivity {
         attendancesButton.setOnClickListener( v->
         {
             Intent intent = new Intent(StudentHomePage.this, StudentAttendances.class);
-            intent.putExtra("idNumber", idNumber);
+            intent.putExtra("idNumber", idNumber[0]);
+            intent.putExtra("lastPage", "StudentHomePage");
             startActivity(intent);
 
         });
@@ -116,16 +137,27 @@ public class StudentHomePage extends AppCompatActivity {
 
     private void showEvents() {
         RecyclerView calendarView = findViewById(R.id.events_viewer);
-        CalendarEvent items = dbHelper.extractCalendarEvents(selectedDate);
-        List<String> name = items.getName();
-        List<String> date = items.getDate();
-        List<String> time = items.getTime();
-        List<CalendarEventsRecyclerViewerItem> events = new ArrayList<>();
-        for (int i = 0; i < name.size(); i++) {
-            events.add(new CalendarEventsRecyclerViewerItem(name.get(i), date.get(i), time.get(i)));
-        }
-        calendarView.setLayoutManager(new LinearLayoutManager(StudentHomePage.this));
-        calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
+        dbHelper.extractCalendarEvents(selectedDate)
+                .addOnSuccessListener(calendar -> {
+                    if(calendar != null)
+                    {
+                        CalendarEvent items = calendar;
+                        List<String> name = items.getName();
+                        List<String> date = items.getDate();
+                        List<String> time = items.getTime();
+                        List<String> room = items.getRoom();
+                        List<CalendarEventsRecyclerViewerItem> events = new ArrayList<>();
+                        for (int i = 0; i < name.size(); i++) {
+                            events.add(new CalendarEventsRecyclerViewerItem(name.get(i), date.get(i), time.get(i), room.get(i)));
+                        }
+                        calendarView.setLayoutManager(new LinearLayoutManager(StudentHomePage.this));
+                        calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
+
+                    }
+
+                });
+
     }
+
 }
 
