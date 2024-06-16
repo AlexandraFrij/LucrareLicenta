@@ -44,4 +44,11 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation ("com.google.firebase:firebase-storage:20.1.0")
+    implementation ("com.google.firebase:firebase-firestore:24.0.0")
+
+    implementation("org.apache.poi:poi:3.9")
+    implementation ("org.apache.poi:poi-ooxml:3.9")
+
+
 }

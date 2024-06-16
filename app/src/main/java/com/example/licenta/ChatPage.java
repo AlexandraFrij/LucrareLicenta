@@ -27,7 +27,6 @@ import java.util.List;
 public class ChatPage extends AppCompatActivity {
     private FirebaseHelper dbHelper;
     private RecyclerView messagesView;
-    private TextView noMessagesView;
     private String currentUserEmail;
     private String otherUserEmail;
 
@@ -54,7 +53,6 @@ public class ChatPage extends AppCompatActivity {
         int photo = intent.getIntExtra("photo", -1);
         otherUserEmail = intent.getStringExtra("email");
 
-        noMessagesView = findViewById(R.id.noMessagesTextView);
 
         otherUsername.setText(username);
         profilePicture.setImageResource(photo);

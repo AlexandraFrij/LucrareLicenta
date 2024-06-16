@@ -18,15 +18,31 @@
         android:drawableTint="@color/white"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-
         />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corners_background"
+        android:id="@+id/downloadBtn"
+        android:layout_below="@id/goBackBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical|start"
+        android:text="Descarca tabel"
+        android:drawablePadding="10dp"
+        android:textColor="@color/fadcd5"
+        android:elevation="20dp"
+        android:paddingStart="110dp"
+        android:drawableStart="@drawable/baseline_download_24"
+        android:drawableTint="@color/fadcd5"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/attendances_viewer"
-        android:layout_below="@+id/goBackBtn"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/downloadBtn"
+        android:layout_marginTop="20dp"
         android:background="@android:color/transparent"
         />
 </RelativeLayout>

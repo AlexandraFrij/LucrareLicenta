@@ -9,9 +9,9 @@
     android:orientation="horizontal"
     >
     <include layout="@layout/picture_layout"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_margin="15dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
         android:layout_gravity="center"
         />
 
@@ -19,25 +19,25 @@
         android:id="@+id/notificationMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="90dp"
+        android:layout_marginLeft="80dp"
         android:text="Notification message"
         android:textColor="@color/fadcd5"
-        android:textSize="20dp"
+        android:textSize="16dp"
         android:textStyle="bold"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         />
 
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="added at 12:33 2024-060-04"
-        android:textSize="15dp"
+        android:textSize="13dp"
         android:textStyle="italic"
-        android:layout_marginLeft="90dp"
+        android:layout_marginLeft="80dp"
         android:textColor="@color/fadcd5"
         android:layout_marginTop="5dp"
         android:layout_below="@+id/notificationMessage"
         android:id="@+id/notificationTime"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

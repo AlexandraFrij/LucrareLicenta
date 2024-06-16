@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.TextView;
@@ -82,7 +84,7 @@ public class ProfilePage extends AppCompatActivity {
             if (v.getId() == R.id.deleteAccBtn)
             {
                 dbHelper.deleteAccount(userEmail);
-                Toast.makeText(ProfilePage.this, "Cont sters!", Toast.LENGTH_LONG).show();
+               showDialog("Cont sters!");
                 Intent signIn = new Intent(ProfilePage.this, LoginPage.class);
                 startActivity(signIn);
             }
@@ -96,5 +98,11 @@ public class ProfilePage extends AppCompatActivity {
         editProfileBtn.setOnClickListener(buttonClickListener);
         goBackBtn.setOnClickListener(buttonClickListener);
         deleteAccBtn.setOnClickListener(buttonClickListener);
+    }
+    public void showDialog(String message) {
+        new AlertDialog.Builder(this, R.style.CustomAlertDialog)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

@@ -4,34 +4,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.licenta.adapter.CalendarEventAdapter;
-import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
-import com.example.licenta.model.CalendarEvent;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class LoginPage extends AppCompatActivity {
     String email;
 
     private FirebaseHelper dbHelper;
+    private AlertDialogMessages alertDialogMessages;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
         SharedPreferences sp = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
 
         super.onCreate(savedInstanceState);
@@ -71,14 +68,17 @@ public class LoginPage extends AppCompatActivity {
                 {
                     email = editTextEmail.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
-                    Snackbar.make(editTextPassword, "Sunt inainte de apel bd", Snackbar.LENGTH_SHORT).show();
-                    dbHelper.extractPasswordUsingEmail(email)
+                    if(email.isEmpty())
+                        showError("Introduceti adresa de e-mail!");
+                    else if(password.isEmpty())
+                        showError("Introduceti parola!");
+                    else dbHelper.extractPasswordUsingEmail(email)
                             .addOnSuccessListener(p -> {
                                 if (p != null) {
                                     String pass = p;
                                     String message = rightPasswordWasIntroduced(pass, password);
                                     if (!message.equals("ok")) {
-                                        Snackbar.make(editTextPassword, message, Snackbar.LENGTH_SHORT).show();
+                                       showError(message);
                                     } else {
                                         SharedPreferences.Editor editor = sp.edit();
                                         editor.putString("email", email);
@@ -99,7 +99,7 @@ public class LoginPage extends AppCompatActivity {
                                                 });
                                     }
                                 } else {
-                                    Snackbar.make(editTextEmail, "Adresa de e-mail nu exista!", Snackbar.LENGTH_SHORT).show();
+                                    showError("Adresa de e-mail nu exista!");
                                 }
                             });
 
@@ -135,6 +135,9 @@ public class LoginPage extends AppCompatActivity {
         if(! pass1.equals(pass2))
             return "Parola incorecta!";
         return "ok";
+    }
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
     }
 
 }

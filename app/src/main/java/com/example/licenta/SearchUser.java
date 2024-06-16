@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 import com.example.licenta.adapter.SearchUserAdapter;
 import com.example.licenta.item.SearchUserRecyclerViewItem;
-import com.example.licenta.model.Users;
+
 
 import java.util.ArrayList;
 import java.util.List;

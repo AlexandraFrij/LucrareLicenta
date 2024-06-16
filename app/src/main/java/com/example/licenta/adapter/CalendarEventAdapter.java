@@ -12,10 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.EditCalendarEvent;
 import com.example.licenta.FirebaseHelper;
-import com.example.licenta.LoginPage;
-import com.example.licenta.ProfHomePage;
+
 import com.example.licenta.R;
-import com.example.licenta.StudentHomePage;
+
 import com.example.licenta.holder.CalendarEventsHolder;
 import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
 
@@ -70,12 +69,14 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
                         holder.attendanceButton.setVisibility(View.GONE);
                         dbHelper.userAddedEvent(currentUser, name, date, time)
                                 .addOnSuccessListener(b -> {
-                                    if (b) {
+                                    if (b && dateAfterToday(date))
+                                    {
                                         holder.deleteButton.setEnabled(true);
                                         holder.deleteButton.setAlpha(1.0f);
                                         holder.editButton.setEnabled(true);
                                         holder.editButton.setAlpha(1.0f);
-                                    } else {
+                                    }
+                                    else {
                                         holder.deleteButton.setEnabled(false);
                                         holder.deleteButton.setAlpha(0.5f);
                                         holder.editButton.setEnabled(false);
@@ -84,6 +85,7 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
                                 });
                     }
                 });
+
 
         holder.deleteButton.setOnClickListener(v -> {
             deleteEvent(name, date, time, room);
@@ -168,8 +170,14 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
             Date selected = sdf.parse(date);
-            if (selected.after(today.getTime()))
-            {
+            Calendar selectedDate = Calendar.getInstance();
+            selectedDate.setTime(selected);
+            selectedDate.set(Calendar.HOUR_OF_DAY, 0);
+            selectedDate.set(Calendar.MINUTE, 0);
+            selectedDate.set(Calendar.SECOND, 0);
+            selectedDate.set(Calendar.MILLISECOND, 0);
+
+            if (selectedDate.equals(today) || selectedDate.after(today)) {
                 return true;
             }
         } catch (Exception e) {
@@ -177,5 +185,6 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
         }
         return false;
     }
+
 
 }

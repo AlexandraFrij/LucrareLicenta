@@ -14,7 +14,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,14 +30,17 @@ public class EditCalendarEvent extends AppCompatActivity {
     Button modifyEventBtn, giveUpBtn;
     int startHour, startMinute, endHour, endMinute;
     String selectedDate, currentDate, currentName, currentStartHour, currentEndHour, email, currentRoom;
+    String[] id = {"0"};
 
     private FirebaseHelper dbHelper;
+    private AlertDialogMessages alertDialogMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_calendar_event);
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
 
         eventNameView = findViewById(R.id.eventName);
         eventDateView = findViewById(R.id.date);
@@ -55,30 +57,26 @@ public class EditCalendarEvent extends AppCompatActivity {
         currentRoom = getIntent().getStringExtra("room");
         email = getIntent().getStringExtra("email");
 
+        String[] start = currentStartHour.split(":");
+        startHour = Integer.parseInt(start[0]);
+        startMinute = Integer.parseInt(start[1]);
+
+        String[] end = currentEndHour.split(":");
+        endHour = Integer.parseInt(end[0]);
+        endMinute = Integer.parseInt(end[1]);
+
+        selectedDate = currentDate;
+
         eventDateView.setText(currentDate);
         eventNameView.setText(currentName);
         startHourView.setText(currentStartHour);
         endHourView.setText(currentEndHour);
         eventRoomView.setText(currentRoom);
 
-        selectedDate = currentDate;
         eventDateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(EditCalendarEvent.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDayOfMonth) {
-                                selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDayOfMonth);
-                                eventDateView.setText(selectedDate);
-                            }
-                        }, year, month, dayOfMonth);
-                datePickerDialog.show();
+                showDatePickerDialog();
             }
         });
 
@@ -102,25 +100,21 @@ public class EditCalendarEvent extends AppCompatActivity {
                 String event = eventNameView.getText().toString().trim();
                 String start = startHourView.getText().toString().trim();
                 String end = endHourView.getText().toString().trim();
-                String room  = eventRoomView.getText().toString().trim();
+                String room = eventRoomView.getText().toString().trim();
 
                 if (event.isEmpty()) {
-                    String message = "Introduceti denumire eveniment";
-                    Toast.makeText(EditCalendarEvent.this, message, Toast.LENGTH_SHORT).show();
+                    String message = "Introduceti denumirea evenimentului";
+                    showError(message);
                 } else if (start.contains("Ora de inceput") || end.contains("Ora de incheiere")) {
-                    String message = "Alegeti o ora";
-                    Toast.makeText(EditCalendarEvent.this, message, Toast.LENGTH_SHORT).show();
-                }
-                else if (room.isEmpty()) {
-                    String message = "Alegeti o sala";
-                    Toast.makeText(EditCalendarEvent.this, message, Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.d(TAG, "Incerc Stergerea eveniment" );
-                    dbHelper.deleteEvent(currentName, currentDate, currentStartHour, currentEndHour, currentRoom)
-                                    .addOnSuccessListener(aVoid ->{
-                                        modifyEvent(event, room);
-                                    });
+                    String message = "Selectati o ora";
+                    showError(message);
+                } else if (room.isEmpty()) {
+                    String message = "Selectati o sala";
+                    showError(message);
+                } else {
+                    modifyEvent(event, room);
+                    modifyEventBtn.setEnabled(false);
+                    modifyEventBtn.setAlpha(0.5f);
                 }
             }
         });
@@ -128,11 +122,27 @@ public class EditCalendarEvent extends AppCompatActivity {
         giveUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbHelper.addEvent(currentName, currentDate, currentStartHour, currentEndHour,email, currentRoom);
                 Intent intent = new Intent(EditCalendarEvent.this, ProfHomePage.class);
                 startActivity(intent);
             }
         });
+    }
+
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(EditCalendarEvent.this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDayOfMonth) {
+                        selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDayOfMonth);
+                        eventDateView.setText(selectedDate);
+                    }
+                }, year, month, dayOfMonth);
+        datePickerDialog.show();
     }
 
     private void timePickerDialogue(TextView textView, boolean isStartTime) {
@@ -162,68 +172,74 @@ public class EditCalendarEvent extends AppCompatActivity {
     }
 
     private void verifyTimeInterval(int startHour, int startMinute, int endHour, int endMinute, String room, AddCalendarEvent.OnTimeAvailabilityChecked callback) {
-        Log.d(TAG, "Incepe verificarea intervalului de timp");
+        Log.d(TAG, "Verifying time interval");
 
         if (startHour < 7) {
-            callback.onChecked("Ora de inceput invalida! " + startHour);
+            callback.onChecked("Ora de inceput invalida!");
             return;
         } else if (endHour > 21) {
-            callback.onChecked("Ora de incheiere invalida! " + endHour);
+            callback.onChecked("Ora de incheiere invalida!");
             return;
         } else if (endHour < startHour) {
-            callback.onChecked("Interval invalid! " + startHour + ":" + endHour);
+            callback.onChecked("Interval invalid! Ora de inceput mai mare decat ora de incheiere!");
             return;
         } else if (endHour == startHour && endMinute <= startMinute) {
-            callback.onChecked("Interval invalid! " + startHour + ":" + startMinute + "-" + endHour + ":" + endMinute);
+            callback.onChecked("Interval invalid! Minutele de incheiere trebuie sa fie mai mari decat minutele de inceput!");
             return;
         }
 
         String startTime = String.format(Locale.getDefault(), "%02d:%02d", startHour, startMinute);
         String endTime = String.format(Locale.getDefault(), "%02d:%02d", endHour, endMinute);
-        Log.d(TAG, "Verificarea disponibilitatii timpului in Firebase: " + startTime + " - " + endTime);
+        Log.d(TAG, "Checking availability in Firebase: " + startTime + " - " + endTime);
 
-        dbHelper.timeIsAvailable(selectedDate, room, startTime, endTime).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                boolean isAvailable = task.getResult();
-                if (!isAvailable) {
-                    callback.onChecked("Intervalul de timp este deja rezervat!");
-                } else {
-                    callback.onChecked("ok");
-                }
-            } else {
-                callback.onChecked("Eroare la verificarea disponibilitatii!");
-                Log.e(TAG, "Firebase task failed: ", task.getException());
-            }
-        });
+        dbHelper.extractEventId(currentName, currentDate, currentStartHour, currentEndHour, currentRoom, email)
+                .addOnSuccessListener(databaseId -> {
+                    Log.d(TAG, "Inainte de  if (databaseId != null && !databaseId.isEmpty())"+ databaseId);
+                    if (databaseId != null && !databaseId.isEmpty()) {
+                        id[0] = databaseId;
+                        Log.d(TAG, "In  if (databaseId != null && !databaseId.isEmpty())");
+                        dbHelper.timeIsAvailableForModify(selectedDate, room, startTime, endTime, databaseId).addOnCompleteListener(task -> {
+                            Log.d(TAG, "Inainte de if (task.isSuccessful())");
+                            if (task.isSuccessful()) {
+                                boolean isAvailable = task.getResult();
+                                if (!isAvailable) {
+                                    callback.onChecked("Sala este deja rezervata pentru intervalul ales!");
+                                } else {
+                                    callback.onChecked("ok");
+                                }
+                            } else {
+                                callback.onChecked("Eroare la verificarea disponibilitatii!");
+                                Log.e(TAG, "Task failed: ", task.getException());
+                            }
+                        });
+                    }
+                });
     }
-    private void modifyEvent(String event, String room)
-    {
+
+    private void modifyEvent(String event, String room) {
         verifyTimeInterval(startHour, startMinute, endHour, endMinute, room, new AddCalendarEvent.OnTimeAvailabilityChecked() {
             @Override
             public void onChecked(String message) {
                 Log.d(TAG, "Verificarea timpului completata: " + message);
                 if (!message.equals("ok")) {
-                    showToast(message);
+                    showError(message);
                 } else {
                     String startTime = String.format(Locale.getDefault(), "%02d:%02d", startHour, startMinute);
                     String endTime = String.format(Locale.getDefault(), "%02d:%02d", endHour, endMinute);
-                    dbHelper.addEvent(event, selectedDate, startTime, endTime, email, room);
-                    String content = event + " " + selectedDate;
-                    dbHelper.insertNotification(content, email);
-                    eventNameView.setText("");
-                    eventNameView.setHint("Descriere eveniment");
-                    startHourView.setText("Ora de inceput");
-                    endHourView.setText("Ora de incheiere");
-                    eventRoomView.setText("Sala eveniment");
-                    showToast("Eveniment adaugat cu succes");
+                    dbHelper.modifyEvent(id[0], event, selectedDate, startTime, endTime, room);
+                    String content = "Un nou " + event + " pe data de " + selectedDate + " a fost modificat în calendar!";
+                    dbHelper.insertNotification(content, email, "calendarEvent");
+                    showSuccess("Eveniment modificat cu succes");
                 }
             }
         });
     }
 
-    private void showToast(String message) {
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(EditCalendarEvent.this, message, Toast.LENGTH_SHORT).show());
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
     }
 
-
+    private void showSuccess(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showSuccessDialog(this, message));
+    }
 }

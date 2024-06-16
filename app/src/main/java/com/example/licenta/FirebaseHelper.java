@@ -117,12 +117,13 @@ public void insertStudentAttendance(String lastName, String firstName, String id
     attendance.put("date", date);
     db.collection(AttendancesCollection).add(attendance);
 }
-public void insertNotification(String content, String createdBy)
+public void insertNotification(String content, String createdBy, String notificationType)
 {
     Map<String, Object> notification = new HashMap<>();
     notification.put("content", content);
     notification.put("created_by", createdBy);
     notification.put("created_at", FieldValue.serverTimestamp());
+    notification.put("type", notificationType);
     db.collection(NotificationsCollection).add(notification);
 }
     private void updateFieldInCollection(String collectionName, String fieldName, String fieldValue, String updateFieldName, String updateFieldValue) {
@@ -459,6 +460,34 @@ public void insertNotification(String content, String createdBy)
                     return true;
                 });
     }
+    public Task<Boolean> timeIsAvailableForModify(String date, String room, String startTime, String endTime, String id) {
+        Query query = calendarRef.whereEqualTo("date", date)
+                .whereEqualTo("room", room)
+                .whereLessThan("start_time", endTime);
+        return query.get().continueWith(task -> {
+            if (!task.isSuccessful()) {
+                Log.e("AddCalendarEvent", "Error checking time availability: ", task.getException());
+                throw task.getException();
+            }
+
+            QuerySnapshot result = task.getResult();
+            if (result != null && !result.isEmpty()) {
+                for (QueryDocumentSnapshot document : result) {
+                    if (document.getId().equals(id)) {
+                        continue;
+                    }
+
+                    String existingEndTime = document.getString("end_time");
+                    if (existingEndTime != null && existingEndTime.compareTo(startTime) > 0) {
+                        Log.d("AddCalendarEvent", "Time interval not available: " + startTime + " - " + existingEndTime);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        });
+    }
 
 
     public Task<CalendarEvent> extractCalendarEvents(String day) {
@@ -502,25 +531,36 @@ public void insertNotification(String content, String createdBy)
         });
     }
 
-    public void  modifyEvent(String currentName, String currentDate, String currentStartTime, String currentEndTime,
-                                          String newName, String newDate, String newStartTime, String newEndTime) {
-
-        Query query = calendarRef.whereEqualTo("date", currentDate)
-                .whereEqualTo("name", currentName)
-                .whereEqualTo("end_time", currentEndTime)
-                .whereEqualTo("start_time", currentStartTime);
-        query.get().addOnCompleteListener( task ->{
-            if (task.isSuccessful() && !task.getResult().isEmpty())
-            {
-                List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                for(DocumentSnapshot document: documents)
-                {
-                    String documentId = document.getId();
-                    calendarRef.document(documentId).update("name", newName);
-                    calendarRef.document(documentId).update("date", newDate);
-                    calendarRef.document(documentId).update("start_time", newStartTime);
-                    calendarRef.document(documentId).update("end_time", newEndTime);
+    public void modifyEvent(String id, String newName, String newDate, String newStartTime, String newEndTime, String newRoom) {
+        calendarRef.document(id).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    calendarRef.document(id).update("name", newName);
+                    calendarRef.document(id).update("date", newDate);
+                    calendarRef.document(id).update("start_time", newStartTime);
+                    calendarRef.document(id).update("end_time", newEndTime);
+                    calendarRef.document(id).update("room", newRoom);
                 }
+            }
+        });
+    }
+
+    public Task<String> extractEventId(String event, String date, String startTime, String endTime, String room, String email) {
+        Log.d("EditCalendarEvent", "Extracting event ID for event: " + event + ", date: " + date + ", startTime: " + startTime + ", endTime: " + endTime + ", room: " + room + ", email: " + email);
+        Query query = calendarRef.whereEqualTo("created_by", email)
+                .whereEqualTo("date", date)
+                .whereEqualTo("name", event)
+                .whereEqualTo("start_time", startTime)
+                .whereEqualTo("end_time", endTime)
+                .whereEqualTo("room", room)
+                .limit(1);
+        return query.get().continueWith(task -> {
+            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                return document.getId();
+            } else {
+                throw new Exception("Document not found");
             }
         });
     }
@@ -616,6 +656,53 @@ public void insertNotification(String content, String createdBy)
             }
         });
     }
+    public Task<Attendance> retrieveAllStudentAttendances() {
+        Query query = attendancesRef.orderBy("id_number", Query.Direction.ASCENDING);
+
+        return query.get().continueWith(task -> {
+            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                Attendance attendance = new Attendance();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String firstName = document.getString("first_name");
+                    String lastName = document.getString("last_name");
+                    String name = lastName + " "+ firstName;
+                    String idNumber = document.getString("id_number");
+                    String classType = document.getString("class_type");
+                    String date = document.getString("date");
+                    attendance.addStudentFullAttendance(name, idNumber, classType, date);
+
+                }
+                return attendance;
+            } else {
+                throw new Exception("No attendance records found");
+            }
+        });
+    }
+    public Task<Attendance> retrieveAllAttendances(String idNumber) {
+        Query query = attendancesRef
+                .whereEqualTo("id_number", idNumber)
+                .orderBy("id_number", Query.Direction.ASCENDING);
+
+        return query.get().continueWith(task -> {
+            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                Attendance attendance = new Attendance();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String firstName = document.getString("first_name");
+                    String lastName = document.getString("last_name");
+                    String name = lastName + " "+ firstName;
+                    String id = document.getString("id_number");
+                    String classType = document.getString("class_type");
+                    String date = document.getString("date");
+                    attendance.addStudentFullAttendance(name, id, classType, date);
+
+                }
+                return attendance;
+            } else {
+                throw new Exception("No attendance records found");
+            }
+        });
+    }
+
 
     public Task<Boolean> userAddedEvent(String userEmail, String name, String date, String time) {
         String[] parts = time.split("-", 2);
@@ -637,7 +724,7 @@ public void insertNotification(String content, String createdBy)
             return false;
         });
     }
-    public Task<Notification> retrieveNotifications(String email) {
+    public Task<Notification> retrieveNotifications() {
         Notification notification = new Notification();
         Query query = notificationsRef.orderBy("created_at", Query.Direction.DESCENDING);
 
@@ -647,12 +734,11 @@ public void insertNotification(String content, String createdBy)
                 if (snapshot != null && !snapshot.isEmpty()) {
                     for (QueryDocumentSnapshot document : snapshot) {
                         String createdBy = document.getString("created_by");
-                        if(! createdBy.equals(email))
-                        {
-                            String content = document.getString("content");
-                            Timestamp createdAt = document.getTimestamp("created_at");
-                            notification.addNotification(content, createdAt.toDate().toString());
-                        }
+                        String content = document.getString("content");
+                        Timestamp createdAt = document.getTimestamp("created_at");
+                        String type = document.getString("type");
+                        notification.addNotification(content, createdAt.toDate().toString(), type);
+
 
                     }
                 }

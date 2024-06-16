@@ -2,24 +2,27 @@ package com.example.licenta;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+
 
 import java.util.regex.Pattern;
-import android.widget.Toast;
+
 
 public class CreateProfAccount extends AppCompatActivity
 {
 
     private FirebaseHelper dbHelper;
+    private AlertDialogMessages alertDialogMessages;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -47,7 +50,7 @@ public class CreateProfAccount extends AppCompatActivity
 
             if (!message.equals("ok"))
             {
-                Toast.makeText(CreateProfAccount.this, message, Toast.LENGTH_SHORT).show();
+               showError(message);
             } else
             {
                 dbHelper.insertProfData(lastName, firstName, email, identificationNb);
@@ -112,7 +115,9 @@ public class CreateProfAccount extends AppCompatActivity
         });
         return message[0];
     }
-
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
+    }
 
 
 }

@@ -79,49 +79,38 @@ public class ConversationsPage extends AppCompatActivity {
 
     public void showRecentChats(String userEmail) {
         RecyclerView recentChats = findViewById(R.id.recent_chats_viewer);
-        Log.i(TAG, "inainte de dbHelper.extractChatRoom(userEmail)");
         dbHelper.extractChatRoom(userEmail)
-                .addOnSuccessListener(c -> {
-                    if (c != null) {
-                        Log.i(TAG, "in if c!= null");
-                        ChatRoom chatroom = c;
+                .addOnSuccessListener(chatRoom -> {
+                    if (chatRoom != null) {
+                        List<String> chatRoomIds = chatRoom.getChatRoomId();
+                        List<String> user1Email = chatRoom.getUserEmail();
+                        List<String> user2Email = chatRoom.getOtherUserEmail();
                         List<RecentChatsRecyclerViewItem> items = new ArrayList<>();
-                        List<String> chatRoomIds = chatroom.getChatRoomId();
-                        List<String> user1Email = chatroom.getUserEmail();
-                        List<String> user2Email = chatroom.getOtherUserEmail();
-                        for (int i = 0; i < chatRoomIds.size(); i++) {
-                            int index = i;
-                            Log.i(TAG, "inainte de dbHelper.getRecentMessage(chatRoomIds.get(index))");
-                            dbHelper.getRecentMessage(chatRoomIds.get(index))
-                                    .addOnSuccessListener(res -> {
-                                        if (res != null) {
-                                            String[] result = res;
-                                            String otherUserEmail = user1Email.get(index).equals(userEmail) ? user2Email.get(index) : user1Email.get(index);
-                                            Log.i(TAG, "inainte de dbHelper.retrieveDataWithEmail(otherUserEmail)");
-                                            dbHelper.retrieveDataWithEmail(otherUserEmail)
-                                                    .addOnCompleteListener(task -> {
-                                                        if (task.isSuccessful()) {
-                                                            String[] info = task.getResult();
-                                                            if (info != null) {
-                                                                String username = info[0] + " " + info[1];
-                                                                items.add(new RecentChatsRecyclerViewItem(username, result[0], otherUserEmail, R.drawable.profile_pic, result[1]));
 
-                                                                if (index == chatRoomIds.size() - 1) {
-                                                                    recentChats.setLayoutManager(new LinearLayoutManager(ConversationsPage.this));
-                                                                    recentChats.setAdapter(new RecentChatsAdapter(getApplicationContext(), items));
-                                                                }
-                                                            }
-                                                        } else {
-                                                            Exception e = task.getException();
-                                                            if (e != null) {
-                                                                Log.e(TAG, "Error retrieving data with email: ", e);
-                                                            }
+                        for (int i = 0; i < chatRoomIds.size(); i++) {
+                            String chatRoomId = chatRoomIds.get(i);
+                            String otherUserEmail = user1Email.get(i).equals(userEmail) ? user2Email.get(i) : user1Email.get(i);
+
+                            dbHelper.getRecentMessage(chatRoomId)
+                                    .addOnSuccessListener(recentMessage -> {
+                                        dbHelper.retrieveDataWithEmail(otherUserEmail)
+                                                .addOnSuccessListener(userInfo -> {
+                                                    if (userInfo != null && recentMessage != null) {
+                                                        String username = userInfo[0] + " " + userInfo[1];
+                                                        String recentMessageContent = recentMessage[0];
+                                                        String recentMessageTime = recentMessage[1];
+                                                        items.add(new RecentChatsRecyclerViewItem(username, recentMessageContent, otherUserEmail, R.drawable.profile_pic, recentMessageTime));
+
+                                                        if (items.size() == chatRoomIds.size()) {
+                                                            recentChats.setLayoutManager(new LinearLayoutManager(ConversationsPage.this));
+                                                            recentChats.setAdapter(new RecentChatsAdapter(getApplicationContext(), items));
                                                         }
-                                                    });
-                                        }
+                                                    }
+                                                });
                                     });
                         }
                     }
                 });
     }
+
 }

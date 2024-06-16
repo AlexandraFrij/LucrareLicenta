@@ -3,6 +3,8 @@ package com.example.licenta;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
@@ -17,11 +19,13 @@ public class CreateStudentAccount extends AppCompatActivity
 {
 
     private FirebaseHelper dbHelper;
+    private AlertDialogMessages alertDialogMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -48,7 +52,7 @@ public class CreateStudentAccount extends AppCompatActivity
             message = verifyData(lastName, firstName, email, idNumber, password, passwordConfirmation);
             if (!message.equals("ok"))
             {
-                Toast.makeText(CreateStudentAccount.this, message, Toast.LENGTH_SHORT).show();
+                showError(message);
             } else {
                 dbHelper.insertStudentData(lastName, firstName, email, idNumber);
                 dbHelper.insertUser(email, "student", password);
@@ -135,5 +139,9 @@ public class CreateStudentAccount extends AppCompatActivity
             message[0] = "Numar matricol invalid!";
         return message[0];
     }
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
+    }
+
 
 }

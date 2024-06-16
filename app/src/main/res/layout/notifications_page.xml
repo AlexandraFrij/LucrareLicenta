@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message_view"
-        android:text="Notificari"
+        android:text="Anunturi"
         android:textSize="25dp"
         android:textStyle="bold|italic"
         android:textColor="@color/fadcd5"
@@ -21,17 +21,17 @@
         android:gravity="center"
         />
     <EditText
-        android:layout_width="330dp"
+        android:layout_width="326dp"
         android:layout_height="50dp"
         android:id="@+id/addAnnouncement"
         android:background="@drawable/rounded_corners_background"
         android:drawableTint="@color/fadcd5"
-        android:text="Adauga un anunt!"
+        android:hint="Adauga un anunt!"
         android:textStyle="italic"
         android:layout_below="@+id/message_view"
         android:textColor="@color/fadcd5"
         android:elevation="20dp"
-        android:layout_margin="4dp"
+        android:layout_margin="10dp"
         android:drawablePadding="10dp"
         android:gravity="center_vertical|start"
         android:padding="10dp"/>
@@ -41,12 +41,14 @@
         android:layout_height="50dp"
         android:drawableStart="@drawable/baseline_add_circle_24"
         android:drawableTint="@color/fadcd5"
+        android:layout_marginTop="10dp"
         android:id="@+id/addAnnouncementBtn"
         android:background="@drawable/rounded_corners_background"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/message_view"
         android:gravity="center"
         android:padding="13dp"
+        android:layout_marginLeft="10dp"
         />
 
     <androidx.recyclerview.widget.RecyclerView

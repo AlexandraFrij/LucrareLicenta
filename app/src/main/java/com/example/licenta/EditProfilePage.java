@@ -4,28 +4,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
+import android.os.Handler;
+import android.os.Looper;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.licenta.item.RecentChatsRecyclerViewItem;
-
-import java.util.regex.Pattern;
 
 public class EditProfilePage extends AppCompatActivity
 {
     private FirebaseHelper dbHelper;
+    private AlertDialogMessages alertDialogMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
+
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
 
         super.onCreate(savedInstanceState);
@@ -71,7 +72,7 @@ public class EditProfilePage extends AppCompatActivity
                     String newEmail = editEmail.getText().toString().trim();
                     updateData(lastName, firstName, info[0], newEmail, oldEmail, sp);
                     String message = "Date salvate!";
-                    Toast.makeText(EditProfilePage.this, message, Toast.LENGTH_SHORT).show();
+                    showSuccess(message);
                 }
                 else
                 if (v.getId() == R.id.leaveBtn)
@@ -102,7 +103,7 @@ public class EditProfilePage extends AppCompatActivity
                     boolean exists = task.getResult();
                     if (exists) {
                         String message = "Adresa de e-mail aflata in folosinta! ";
-                        Toast.makeText(EditProfilePage.this, message, Toast.LENGTH_SHORT).show();
+                        showError(message);
                     }
                     else
                     {
@@ -114,6 +115,11 @@ public class EditProfilePage extends AppCompatActivity
                 }
             });
     }
-
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
+    }
+    private void showSuccess(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showSuccessDialog(this, message));
+    }
 
 }

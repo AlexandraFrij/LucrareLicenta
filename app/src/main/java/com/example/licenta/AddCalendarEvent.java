@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,20 +21,22 @@ public class AddCalendarEvent extends AppCompatActivity {
     private static final String TAG = "AddCalendarEvent";
 
     EditText eventNameView;
-    TextView eventDateView;
-    TextView startHourView, endHourView;
+    TextView eventDateView, startHourView, endHourView;
     EditText eventRoomView;
     Button addEventBtn, giveUpBtn;
     int startHour, startMinute, endHour, endMinute;
     String selectedDate, email;
 
     private FirebaseHelper dbHelper;
+    private AlertDialogMessages alertDialogMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_calendar_event);
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
+
         eventNameView = findViewById(R.id.eventName);
         eventDateView = findViewById(R.id.date);
         startHourView = findViewById(R.id.startHour);
@@ -70,30 +71,30 @@ public class AddCalendarEvent extends AppCompatActivity {
                 String room = eventRoomView.getText().toString().trim();
 
                 if (event.isEmpty()) {
-                    showToast("Introduceti denumire eveniment");
+                    showError("Introduceti denumire eveniment");
                 } else if (start.contains("Ora de inceput") || end.contains("Ora de incheiere")) {
-                    showToast("Alegeti o ora");
+                    showError("Alegeti o ora");
                 } else if (room.isEmpty()) {
-                    showToast("Alegeti o sala");
+                    showError("Alegeti o sala");
                 } else {
                     verifyTimeInterval(startHour, startMinute, endHour, endMinute, room, new OnTimeAvailabilityChecked() {
                         @Override
                         public void onChecked(String message) {
                             Log.d(TAG, "Verificarea timpului completata: " + message);
                             if (!message.equals("ok")) {
-                                showToast(message);
+                                showError(message);
                             } else {
                                 String startTime = String.format(Locale.getDefault(), "%02d:%02d", startHour, startMinute);
                                 String endTime = String.format(Locale.getDefault(), "%02d:%02d", endHour, endMinute);
                                 dbHelper.addEvent(event, selectedDate, startTime, endTime, email, room);
-                                String content = event + " " + selectedDate;
-                                dbHelper.insertNotification(content, email);
+                                String content = "Un nou "+ event + " " + selectedDate +" a fost adaugat in calendar!";
+                                dbHelper.insertNotification(content, email, "calendarEvent");
                                 eventNameView.setText("");
                                 eventNameView.setHint("Descriere eveniment");
                                 startHourView.setText("Ora de inceput");
                                 endHourView.setText("Ora de incheiere");
                                 eventRoomView.setText("Sala eveniment");
-                                showToast("Eveniment adaugat cu succes");
+                                showSuccess("Eveniment adaugat cu succes");
                             }
                         }
                     });
@@ -140,16 +141,16 @@ public class AddCalendarEvent extends AppCompatActivity {
         Log.d(TAG, "Incepe verificarea intervalului de timp");
 
         if (startHour < 7) {
-            callback.onChecked("Ora de inceput invalida! " + startHour);
+            callback.onChecked("Ora de inceput invalida! ");
             return;
         } else if (endHour > 21) {
-            callback.onChecked("Ora de incheiere invalida! " + endHour);
+            callback.onChecked("Ora de incheiere invalida! ");
             return;
         } else if (endHour < startHour) {
-            callback.onChecked("Interval invalid! " + startHour + ":" + endHour);
+            callback.onChecked("Interval invalid! ");
             return;
         } else if (endHour == startHour && endMinute <= startMinute) {
-            callback.onChecked("Interval invalid! " + startHour + ":" + startMinute + "-" + endHour + ":" + endMinute);
+            callback.onChecked("Interval invalid! ");
             return;
         }
 
@@ -161,7 +162,7 @@ public class AddCalendarEvent extends AppCompatActivity {
             if (task.isSuccessful()) {
                 boolean isAvailable = task.getResult();
                 if (!isAvailable) {
-                    callback.onChecked("Intervalul de timp este deja rezervat!");
+                    callback.onChecked("Sala este rezervata pentru intervalul ales!");
                 } else {
                     callback.onChecked("ok");
                 }
@@ -172,8 +173,11 @@ public class AddCalendarEvent extends AppCompatActivity {
         });
     }
 
-    private void showToast(String message) {
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(AddCalendarEvent.this, message, Toast.LENGTH_SHORT).show());
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
+    }
+    private void showSuccess(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showSuccessDialog(this, message));
     }
 
     interface OnTimeAvailabilityChecked {

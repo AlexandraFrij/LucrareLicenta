@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -15,17 +17,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.adapter.NotificationAdapter;
 import com.example.licenta.item.NotificationRecyclerViewItem;
-import com.example.licenta.model.Notification;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.Button;
+
 public class NotificationsPage extends AppCompatActivity {
     private FirebaseHelper dbHelper;
     private String userEmail, userStatus;
     private EditText addAnnouncementText;
     private Button addAnnouncementBtn;
+    private AlertDialogMessages alertDialogMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +37,41 @@ public class NotificationsPage extends AppCompatActivity {
         setContentView(R.layout.notifications_page);
 
         dbHelper = new FirebaseHelper();
+        alertDialogMessages = new AlertDialogMessages();
+
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
 
         userEmail = sp.getString("email", null);
         userStatus = sp.getString("status", null);
         addAnnouncementText = findViewById(R.id.addAnnouncement);
         addAnnouncementBtn = findViewById(R.id.addAnnouncementBtn);
+
+        showNotifications();
+
+        addAnnouncementBtn.setOnClickListener(v ->
+        {
+            String announcement = addAnnouncementText.getText().toString().trim();
+            if(announcement.isEmpty())
+            {
+                String message = "Adaugati un text al anuntului!";
+                showError(message);
+            }
+            else
+            {
+                dbHelper.insertNotification(announcement, userEmail, "announcement");
+                showNotifications();
+                addAnnouncementText.setText("");
+                addAnnouncementText.setHint("Adauga un anunt!");
+            }
+        });
+
         if(userStatus.equals("student"))
         {
             addAnnouncementText.setVisibility(View.GONE);
             addAnnouncementBtn.setVisibility(View.GONE);
 
         }
-        showNotifications(userEmail);
+
 
         BottomNavigationView bottomNavBar = findViewById(R.id.bottom_nav_bar);
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -82,21 +107,27 @@ public class NotificationsPage extends AppCompatActivity {
             return false;
         }
     }
-    private void showNotifications(String userEmail) {
+    private void showNotifications() {
         RecyclerView notificationsRecyclerView = findViewById(R.id.notifications_viewer);
-        dbHelper.retrieveNotifications(userEmail)
+        dbHelper.retrieveNotifications()
                 .addOnSuccessListener(notification -> {
                     if(notification != null)
                     {
                         List<String> contents = notification.getContent();
                         List<String> dates = notification.getDate();
+                        List<String> types = notification.getType();
                         List<NotificationRecyclerViewItem> notifications = new ArrayList<>();
 
                         for (int i = 0; i < contents.size(); i++)
                         {
-                            String notificationContent = "Un nou " + contents.get(i) +" a fost adaugat in calendar!";
+                            String notificationContent = contents.get(i);
                             String notificationDate = "Creat la data " + dates.get(i);
-                            notifications.add(new NotificationRecyclerViewItem(notificationContent, notificationDate, R.drawable.baseline_calendar_month_24));
+                            String notificationType = types.get(i);
+                            if(notificationType.equals("calendarEvent"))
+                                notifications.add(new NotificationRecyclerViewItem(notificationContent, notificationDate, R.drawable.baseline_calendar_month_24));
+                            else
+                                notifications.add(new NotificationRecyclerViewItem(notificationContent, notificationDate, R.drawable.baseline_notification_important_24));
+
                         }
                         notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(NotificationsPage.this));
                         notificationsRecyclerView.setAdapter(new NotificationAdapter(getApplicationContext(), notifications));
@@ -104,6 +135,8 @@ public class NotificationsPage extends AppCompatActivity {
 
                 });
 
-
+    }
+    private void showError(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
     }
 }

@@ -61,4 +61,11 @@ public class Attendance {
         this.idNumber.add(idNumber);
         this.classType.add(classType);
     }
+    public void addStudentFullAttendance(String name, String idNumber, String classType, String date)
+    {
+        this.name.add(name);
+        this.idNumber.add(idNumber);
+        this.classType.add(classType);
+        this.date.add(date);
+    }
 }
