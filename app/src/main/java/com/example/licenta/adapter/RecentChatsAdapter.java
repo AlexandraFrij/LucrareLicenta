@@ -3,6 +3,7 @@ package com.example.licenta.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -10,9 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.ChatPage;
+import com.example.licenta.FirebaseHelper;
 import com.example.licenta.R;
 import com.example.licenta.holder.RecentChatsViewHolder;
 import com.example.licenta.item.RecentChatsRecyclerViewItem;
+import com.example.licenta.util.AndroidUtil;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -47,6 +50,15 @@ public class RecentChatsAdapter extends RecyclerView.Adapter<RecentChatsViewHold
         holder.profilePicture.setImageResource(photo);
         holder.message.setText(message);
         holder.time.setText(timestamp);
+        FirebaseHelper.getProfilePicture(email).getDownloadUrl()
+                .addOnCompleteListener( task ->
+                {
+                    if(task.isSuccessful())
+                    {
+                        Uri uri = task.getResult();
+                        AndroidUtil.setProfilePicture(context, uri, holder.profilePicture);
+                    }
+                });
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChatPage.class);

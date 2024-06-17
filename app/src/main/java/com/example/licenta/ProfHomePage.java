@@ -3,6 +3,7 @@ package com.example.licenta;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.licenta.adapter.CalendarEventAdapter;
 import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
 import com.example.licenta.model.CalendarEvent;
+import com.example.licenta.util.AndroidUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -33,6 +35,7 @@ public class ProfHomePage extends AppCompatActivity {
     TextView emailText;
     CalendarView calendar;
     Button addEventButton, seeAttendancesList;
+    ImageView profileView;
     String selectedDate;
     String userEmail;
 
@@ -48,6 +51,7 @@ public class ProfHomePage extends AppCompatActivity {
         calendar = findViewById(R.id.calendar);
         addEventButton = findViewById(R.id.addEventBtn);
         seeAttendancesList = findViewById(R.id.seeAttendancesList);
+        profileView = findViewById(R.id.profileImage);
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         userEmail = sp.getString("email", null);
@@ -66,6 +70,16 @@ public class ProfHomePage extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                });
+        FirebaseHelper.getProfilePicture(userEmail).getDownloadUrl()
+                .addOnCompleteListener( task ->
+                {
+                    if(task.isSuccessful())
+                    {
+                        Uri uri = task.getResult();
+                        AndroidUtil.setProfilePicture(getApplicationContext(), uri, profileView);
+                    }
+
                 });
         emailText.setText(userEmail);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

@@ -3,6 +3,7 @@ package com.example.licenta;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.adapter.ChatAdapter;
 import com.example.licenta.item.ChatRecyclerViewItem;
+import com.example.licenta.util.AndroidUtil;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Task;
 
@@ -39,6 +41,7 @@ public class ChatPage extends AppCompatActivity {
 
         dbHelper = new FirebaseHelper();
 
+
         Button goBackBtn = findViewById(R.id.goBackBtn);
         ImageButton send = findViewById(R.id.sendBtn);
         EditText userMessage = findViewById(R.id.message_input);
@@ -56,9 +59,19 @@ public class ChatPage extends AppCompatActivity {
 
         otherUsername.setText(username);
         profilePicture.setImageResource(photo);
+        FirebaseHelper.getProfilePicture(otherUserEmail).getDownloadUrl()
+                .addOnCompleteListener( task ->
+                {
+                    if(task.isSuccessful())
+                    {
+                        Uri uri = task.getResult();
+                        AndroidUtil.setProfilePicture(getApplicationContext(), uri, profilePicture);
+                    }
+                });
 
         messagesView = findViewById(R.id.messages);
         messagesView.setLayoutManager(new LinearLayoutManager(this));
+
 
         goBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override

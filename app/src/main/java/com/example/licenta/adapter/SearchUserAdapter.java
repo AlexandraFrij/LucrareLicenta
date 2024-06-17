@@ -2,6 +2,7 @@ package com.example.licenta.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -9,9 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.ChatPage;
+import com.example.licenta.FirebaseHelper;
 import com.example.licenta.holder.SearchUserHolder;
 import com.example.licenta.R;
 import com.example.licenta.item.SearchUserRecyclerViewItem;
+import com.example.licenta.util.AndroidUtil;
 
 import java.util.List;
 
@@ -40,6 +43,15 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserHolder>
         String email = items.get(position).getEmail();
         holder.username.setText(username);
         holder.profilePicture.setImageResource(photo);
+        FirebaseHelper.getProfilePicture(email).getDownloadUrl()
+                .addOnCompleteListener( task ->
+                {
+                    if(task.isSuccessful())
+                    {
+                        Uri uri = task.getResult();
+                        AndroidUtil.setProfilePicture(context, uri, holder.profilePicture);
+                    }
+                });
 
         holder.itemView.setOnClickListener(v ->{
             Intent intent = new Intent(context, ChatPage.class);

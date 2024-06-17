@@ -65,7 +65,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Numar identificare:"
+        android:hint="Cod verificare:"
         android:textColorHint="@color/a1b0c1a"
         android:textSize="20dp"
         android:textStyle="italic"

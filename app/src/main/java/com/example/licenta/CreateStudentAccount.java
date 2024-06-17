@@ -15,10 +15,13 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.regex.Pattern;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class CreateStudentAccount extends AppCompatActivity
 {
 
     private FirebaseHelper dbHelper;
+    private FirebaseAuth firebaseAuth;
     private AlertDialogMessages alertDialogMessages;
 
     @Override
@@ -26,6 +29,7 @@ public class CreateStudentAccount extends AppCompatActivity
     {
         dbHelper = new FirebaseHelper();
         alertDialogMessages = new AlertDialogMessages();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -54,10 +58,21 @@ public class CreateStudentAccount extends AppCompatActivity
             {
                 showError(message);
             } else {
-                dbHelper.insertStudentData(lastName, firstName, email, idNumber);
-                dbHelper.insertUser(email, "student", password);
-                Intent login = new Intent(CreateStudentAccount.this, LoginPage.class);
-                startActivity(login);
+                firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+                        task -> {
+                            if(task.isSuccessful())
+                            {
+                                dbHelper.insertStudentData(lastName, firstName, email, idNumber);
+                                dbHelper.insertUser(email, "student", password);
+                                Intent login = new Intent(CreateStudentAccount.this, LoginPage.class);
+                                startActivity(login);
+                            }
+                            else {
+                                showError("Eroare la autentificare! Incercati din nou..");
+                            }
+
+                        });
+
             }
         });
 

@@ -15,15 +15,17 @@
         android:layout_marginTop = "50dp"
         android:layout_marginBottom="150dp"
         android:gravity="center_vertical"
-        android:text="  Logare"
+        android:text="Logare"
         android:textColor="@color/a765d67"
         android:textSize="30dp"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold|italic"
+        android:padding="10dp"
+        android:layout_marginLeft="10dp"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="  E-mail utilizator:"
+        android:hint="E-mail utilizator:"
         android:textColorHint="@color/a1b0c1a"
         android:textSize="20dp"
         android:textStyle="italic"
@@ -37,7 +39,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="  Parola:"
+        android:hint="Parola:"
         android:textColorHint="@color/a1b0c1a"
         android:textSize="20dp"
         android:inputType="textPassword"

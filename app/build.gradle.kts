@@ -49,6 +49,7 @@ dependencies {
 
     implementation("org.apache.poi:poi:3.9")
     implementation ("org.apache.poi:poi-ooxml:3.9")
-
+    implementation ("com.github.dhaval2404:imagepicker:2.1")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 }

@@ -16,19 +16,22 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class LoginPage extends AppCompatActivity {
     String email;
 
     private FirebaseHelper dbHelper;
+    private FirebaseAuth firebaseAuth;
     private AlertDialogMessages alertDialogMessages;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new FirebaseHelper();
         alertDialogMessages = new AlertDialogMessages();
+        firebaseAuth = FirebaseAuth.getInstance();
+
         SharedPreferences sp = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
 
         super.onCreate(savedInstanceState);
@@ -72,14 +75,11 @@ public class LoginPage extends AppCompatActivity {
                         showError("Introduceti adresa de e-mail!");
                     else if(password.isEmpty())
                         showError("Introduceti parola!");
-                    else dbHelper.extractPasswordUsingEmail(email)
-                            .addOnSuccessListener(p -> {
-                                if (p != null) {
-                                    String pass = p;
-                                    String message = rightPasswordWasIntroduced(pass, password);
-                                    if (!message.equals("ok")) {
-                                       showError(message);
-                                    } else {
+                    else {
+                        firebaseAuth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(task ->{
+                                    if(task.isSuccessful())
+                                    {
                                         SharedPreferences.Editor editor = sp.edit();
                                         editor.putString("email", email);
                                         editor.commit();
@@ -98,10 +98,9 @@ public class LoginPage extends AppCompatActivity {
                                                     }
                                                 });
                                     }
-                                } else {
-                                    showError("Adresa de e-mail nu exista!");
-                                }
-                            });
+                                    else showError("E-mail sau parola introdusa gresit!");
+                                });
+                    }
 
                 }
                 else
@@ -128,14 +127,7 @@ public class LoginPage extends AppCompatActivity {
         createAccountBtn.setOnClickListener(buttonClickListener);
     }
 
-    public String rightPasswordWasIntroduced(String pass1, String pass2)
-    {
-        if(pass1 == null)
-            return "Adresa de e-mail nu exista!";
-        if(! pass1.equals(pass2))
-            return "Parola incorecta!";
-        return "ok";
-    }
+
     private void showError(String message) {
         new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
     }

@@ -3,6 +3,7 @@ package com.example.licenta;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,8 +11,11 @@ import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.licenta.util.AndroidUtil;
 
 public class ProfilePage extends AppCompatActivity {
 
@@ -32,10 +36,21 @@ public class ProfilePage extends AppCompatActivity {
         Button deleteAccBtn = findViewById(R.id.deleteAccBtn);
         TextView name = findViewById(R.id.profileName);
         TextView emailAddress = findViewById(R.id.profileEmail);
+        ImageView profilePicView = findViewById(R.id.profilePic);
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         userEmail = sp.getString("email", null);
         userStatus = sp.getString("status", null);
+
+        FirebaseHelper.getProfilePicture(userEmail).getDownloadUrl()
+                        .addOnCompleteListener( task ->
+                        {
+                            if(task.isSuccessful())
+                            {
+                                Uri uri = task.getResult();
+                                AndroidUtil.setProfilePicture(getApplicationContext(), uri, profilePicView);
+                            }
+                        });
 
         dbHelper.retrieveDataWithEmail(userEmail)
                 .addOnCompleteListener(task -> {

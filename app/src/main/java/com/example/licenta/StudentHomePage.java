@@ -4,6 +4,7 @@ package com.example.licenta;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.licenta.adapter.CalendarEventAdapter;
 import com.example.licenta.item.CalendarEventsRecyclerViewerItem;
 import com.example.licenta.model.CalendarEvent;
+import com.example.licenta.util.AndroidUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class StudentHomePage extends AppCompatActivity {
     TextView idNumberText;
     CalendarView calendar;
     Button attendancesButton;
+    ImageView profileView;
     String selectedDate;
     String userEmail;
 
@@ -52,6 +55,7 @@ public class StudentHomePage extends AppCompatActivity {
         idNumberText = findViewById(R.id.idNumber);
         calendar = findViewById(R.id.calendar);
         attendancesButton = findViewById(R.id.attendancesBtn);
+        profileView = findViewById(R.id.profileImage);
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         userEmail = sp.getString("email", null);
@@ -69,6 +73,16 @@ public class StudentHomePage extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                });
+        FirebaseHelper.getProfilePicture(userEmail).getDownloadUrl()
+                .addOnCompleteListener( task ->
+                {
+                    if(task.isSuccessful())
+                    {
+                        Uri uri = task.getResult();
+                        AndroidUtil.setProfilePicture(getApplicationContext(), uri, profileView);
+                    }
+
                 });
         String[] idNumber = new String[]{""};
         dbHelper.retrieveIdNumber(userEmail)

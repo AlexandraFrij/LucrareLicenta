@@ -10,6 +10,12 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Pattern;
 
 
@@ -17,12 +23,14 @@ public class CreateProfAccount extends AppCompatActivity
 {
 
     private FirebaseHelper dbHelper;
+    private FirebaseAuth firebaseAuth;
     private AlertDialogMessages alertDialogMessages;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         dbHelper = new FirebaseHelper();
         alertDialogMessages = new AlertDialogMessages();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -46,21 +54,29 @@ public class CreateProfAccount extends AppCompatActivity
             String identificationNb = editTextIdentificationNb.getText().toString().trim();
 
             String message;
-            message = verifyData(lastName, firstName, email, password, passwordConfirmation);
+            message = verifyData(lastName, firstName, email, password, passwordConfirmation, identificationNb);
 
             if (!message.equals("ok"))
             {
                showError(message);
             } else
             {
-                dbHelper.insertProfData(lastName, firstName, email, identificationNb);
-                dbHelper.insertUser(email, "professor", password);
-                Intent login = new Intent(CreateProfAccount.this, LoginPage.class);
-                startActivity(login);
+                firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task ->{
+                    if(task.isSuccessful())
+                    {
+                        dbHelper.insertProfData(lastName, firstName, email, identificationNb);
+                        dbHelper.insertUser(email, "professor", password);
+                        Intent login = new Intent(CreateProfAccount.this, LoginPage.class);
+                        startActivity(login);
+                    }
+                    else {
+                        showError("Eroare la autentificare! Incercati din nou..");
+                    }
+                });
             }
         });
     }
-    public String verifyData(String lastName, String firstName, String email, String pass1, String pass2)
+    private String verifyData(String lastName, String firstName, String email, String pass1, String pass2, String identificationNumber)
     {
         String s = verifyName(lastName, firstName);
         if (!s.equals("ok"))
@@ -71,10 +87,13 @@ public class CreateProfAccount extends AppCompatActivity
         s = verifyPassword(pass1, pass2);
         if (!s.equals("ok"))
             return s;
+        s = verifyIdentificationNumber(email, identificationNumber);
+        if (!s.equals("ok"))
+            return s;
         return "ok";
     }
 
-    public String verifyPassword(String password, String passwordConf)
+    private String verifyPassword(String password, String passwordConf)
     {
         if (!password.equals(passwordConf))
             return "Parola reintrodusa este gresita!";
@@ -85,7 +104,7 @@ public class CreateProfAccount extends AppCompatActivity
         return "ok";
     }
 
-    public String verifyName(String lastName, String firstName)
+    private String verifyName(String lastName, String firstName)
     {
         String regex = "^[A-Z][a-z]*(?:-[A-Z][a-z]*)*$";
         Pattern pattern = Pattern.compile(regex);
@@ -96,7 +115,7 @@ public class CreateProfAccount extends AppCompatActivity
         return "ok";
     }
 
-    public String verifyEmail(String email) {
+    private String verifyEmail(String email) {
         String[] message = new String[] {"ok"};
         dbHelper.emailExists(email).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -115,6 +134,31 @@ public class CreateProfAccount extends AppCompatActivity
         });
         return message[0];
     }
+    private String verifyIdentificationNumber(String userEmail, String identificationNumber)
+    {
+        String[] message = new String[] {"Cod de verificare gresit!"};
+        String path = "identificationNumbers.txt";
+
+        try (InputStream inputStream = this.getAssets().open(path);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length < 2) {
+                    continue;
+                }
+                String email = parts[0].trim();
+                String code = parts[1].trim();
+                if (email.equals(userEmail) && code.equals(identificationNumber))
+                    return "ok";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return message[0];
+
+    }
+
     private void showError(String message) {
         new Handler(Looper.getMainLooper()).post(() -> alertDialogMessages.showErrorDialog(this, message));
     }

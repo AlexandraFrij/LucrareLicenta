@@ -33,6 +33,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.Arrays;
 import android.util.Log;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 public class FirebaseHelper {
     private static final String UsersCollection = "users";
     private  static final String StudentsCollection = "students";
@@ -774,6 +777,10 @@ public void insertNotification(String content, String createdBy, String notifica
                 return false;
         });
     }
-
+    public static StorageReference getProfilePicture(String email)
+    {
+        return FirebaseStorage.getInstance().getReference().child("profile_picture")
+                .child(email);
+    }
 
 }
