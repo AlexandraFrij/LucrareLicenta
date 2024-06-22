@@ -6,10 +6,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.licenta.util.AlertDialogMessages;
+import com.example.licenta.util.AndroidUtil;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.BufferedReader;
@@ -42,6 +46,10 @@ public class CreateProfAccount extends AppCompatActivity
         EditText editTextIdentificationNb = findViewById(R.id.identificationNb);
         EditText editTextPassword = findViewById(R.id.password);
         EditText editTextConfirmPassword = findViewById(R.id.confirmPassword);
+        ImageView seePassword = findViewById(R.id.seePassword);
+        ImageView seePasswordConfirmation = findViewById(R.id.seePasswordConfirmation);
+        AndroidUtil.seePassword(editTextPassword, seePassword);
+        AndroidUtil.seePassword(editTextConfirmPassword, seePasswordConfirmation);
 
         Button createAcc = findViewById(R.id.createProfAccBtn);
         createAcc.setOnClickListener(v ->
@@ -65,7 +73,7 @@ public class CreateProfAccount extends AppCompatActivity
                     if(task.isSuccessful())
                     {
                         dbHelper.insertProfData(lastName, firstName, email, identificationNb);
-                        dbHelper.insertUser(email, "professor", password);
+                        dbHelper.insertUser(email, "professor");
                         Intent login = new Intent(CreateProfAccount.this, LoginPage.class);
                         startActivity(login);
                     }

@@ -1,7 +1,6 @@
 package com.example.licenta;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,12 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.regex.Pattern;
-import android.widget.Toast;
 
+import android.widget.ImageView;
+
+import com.example.licenta.util.AlertDialogMessages;
+import com.example.licenta.util.AndroidUtil;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class CreateStudentAccount extends AppCompatActivity
@@ -42,6 +42,11 @@ public class CreateStudentAccount extends AppCompatActivity
         EditText editTextPassword = findViewById(R.id.password);
         EditText editTextConfirmPassword = findViewById(R.id.confirmPassword);
 
+        ImageView seePassword = findViewById(R.id.seePassword);
+        ImageView seePasswordConfirmation = findViewById(R.id.seePasswordConfirmation);
+        AndroidUtil.seePassword(editTextPassword, seePassword);
+        AndroidUtil.seePassword(editTextConfirmPassword, seePasswordConfirmation);
+
         Button createAcc = findViewById(R.id.createStudAccBtn);
         createAcc.setOnClickListener(v ->
         {
@@ -63,7 +68,7 @@ public class CreateStudentAccount extends AppCompatActivity
                             if(task.isSuccessful())
                             {
                                 dbHelper.insertStudentData(lastName, firstName, email, idNumber);
-                                dbHelper.insertUser(email, "student", password);
+                                dbHelper.insertUser(email, "student");
                                 Intent login = new Intent(CreateStudentAccount.this, LoginPage.class);
                                 startActivity(login);
                             }
@@ -99,7 +104,7 @@ public class CreateStudentAccount extends AppCompatActivity
     {
         if (!password.equals(passwordConf))
             return "Parola reintrodusa este gresita!";
-        String regex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*()_+=-]).{8,}$";
+        String regex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%^&*()_+=-]).{8,}$";
         Pattern pattern = Pattern.compile(regex);
         if (!pattern.matcher(password).matches())
             return "Parola invalida!";

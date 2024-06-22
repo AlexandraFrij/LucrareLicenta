@@ -15,6 +15,8 @@ import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.licenta.util.AlertDialogMessages;
+
 import java.util.Locale;
 
 public class AddCalendarEvent extends AppCompatActivity {

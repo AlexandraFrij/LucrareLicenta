@@ -16,10 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.licenta.util.AndroidUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ProfilePage extends AppCompatActivity {
 
     private FirebaseHelper dbHelper;
+    private FirebaseAuth firebaseAuth;
     private String userStatus, userEmail;
 
     @Override
@@ -36,11 +39,14 @@ public class ProfilePage extends AppCompatActivity {
         Button deleteAccBtn = findViewById(R.id.deleteAccBtn);
         TextView name = findViewById(R.id.profileName);
         TextView emailAddress = findViewById(R.id.profileEmail);
+
+
         ImageView profilePicView = findViewById(R.id.profilePic);
 
         SharedPreferences sp = getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         userEmail = sp.getString("email", null);
         userStatus = sp.getString("status", null);
+
 
         FirebaseHelper.getProfilePicture(userEmail).getDownloadUrl()
                         .addOnCompleteListener( task ->
@@ -98,10 +104,22 @@ public class ProfilePage extends AppCompatActivity {
             else
             if (v.getId() == R.id.deleteAccBtn)
             {
-                dbHelper.deleteAccount(userEmail);
-               showDialog("Cont sters!");
-                Intent signIn = new Intent(ProfilePage.this, LoginPage.class);
-                startActivity(signIn);
+                firebaseAuth = FirebaseAuth.getInstance();
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if( user != null)
+                {
+                    user.delete().addOnCompleteListener( task ->{
+                        if(task.isSuccessful())
+                        {
+                            dbHelper.deleteAccount(userEmail);
+                            showDialog("Cont sters!");
+                            Intent signIn = new Intent(ProfilePage.this, LoginPage.class);
+                            startActivity(signIn);
+                        }
+                        else   showDialog("Eroare la stergerea contului!");
+
+                    });
+                }
             }
             else
             {

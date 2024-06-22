@@ -91,6 +91,17 @@
         android:gravity="center_vertical"
         android:padding="10dp"
         />
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/seePassword"
+        android:layout_toEndOf="@id/password"
+        android:layout_alignTop="@id/password"
+        android:drawableTint="@color/a1b0c1a"
+        android:layout_marginLeft="-70dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -105,6 +116,17 @@
         android:inputType="textPassword"
         android:gravity="center_vertical"
         android:padding="10dp"
+        />
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/seePasswordConfirmation"
+        android:layout_toEndOf="@+id/confirmPassword"
+        android:layout_alignTop="@+id/confirmPassword"
+        android:drawableTint="@color/a1b0c1a"
+        android:layout_marginLeft="-70dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
         />
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"

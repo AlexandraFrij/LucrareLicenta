@@ -150,26 +150,26 @@ public class ProfHomePage extends AppCompatActivity {
     private void showEvents() {
         RecyclerView calendarView = findViewById(R.id.events_viewer);
         dbHelper.extractCalendarEvents(selectedDate)
-                .addOnSuccessListener(calendar -> {
-                   if(calendar != null)
-                   {
-                       CalendarEvent items = calendar;
-                       List<String> name = items.getName();
-                       List<String> date = items.getDate();
-                       List<String> time = items.getTime();
-                       List<String> room = items.getRoom();
-                       List<CalendarEventsRecyclerViewerItem> events = new ArrayList<>();
-                       for (int i = 0; i < name.size(); i++) {
-                           events.add(new CalendarEventsRecyclerViewerItem(name.get(i), date.get(i), time.get(i), room.get(i)));
-                       }
-                       calendarView.setLayoutManager(new LinearLayoutManager(ProfHomePage.this));
-                       calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
-
-                   }
-
+                .addOnSuccessListener(calendarList -> {
+                    if (calendarList != null) {
+                        List<CalendarEventsRecyclerViewerItem> events = new ArrayList<>();
+                        for (CalendarEvent event : calendarList) {
+                            events.add(new CalendarEventsRecyclerViewerItem(
+                                    event.getName(),
+                                    event.getDate(),
+                                    event.getTime(),
+                                    event.getRoom()
+                            ));
+                        }
+                        calendarView.setLayoutManager(new LinearLayoutManager(ProfHomePage.this));
+                        calendarView.setAdapter(new CalendarEventAdapter(getApplicationContext(), events, userEmail));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
                 });
-
     }
+
 
     private void checkDateAndDisableButton() {
         Calendar today = Calendar.getInstance();

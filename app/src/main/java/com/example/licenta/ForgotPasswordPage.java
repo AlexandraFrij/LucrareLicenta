@@ -3,10 +3,11 @@ package com.example.licenta;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
+
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.licenta.util.AlertDialogMessages;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordPage extends AppCompatActivity {

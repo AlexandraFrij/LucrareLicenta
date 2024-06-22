@@ -56,11 +56,10 @@ public class FirebaseHelper {
     private  CollectionReference attendancesRef = db.collection(AttendancesCollection);
     private CollectionReference notificationsRef = db.collection(NotificationsCollection);
 
-    public void insertUser(String email, String status, String password) {
+    public void insertUser(String email, String status) {
         Map<String, Object> user = new HashMap<>();
         user.put("email", email);
         user.put("status", status);
-        user.put("password", password);
         db.collection(UsersCollection).document(email).set(user);
 
     }
@@ -226,12 +225,6 @@ public void insertNotification(String content, String createdBy, String notifica
 
         Task<Void> deleteProfessorTask = profsRef.document(email).delete();
         tasks.add(deleteProfessorTask);
-
-        Task<Void> deleteAttendanceTask = attendancesRef.document(email).delete();
-        tasks.add(deleteAttendanceTask);
-
-        Task<Void> deleteCalendarTask = calendarRef.document(email).delete();
-        tasks.add(deleteCalendarTask);
 
         return Tasks.whenAll(tasks);
     }
@@ -493,9 +486,9 @@ public void insertNotification(String content, String createdBy, String notifica
     }
 
 
-    public Task<CalendarEvent> extractCalendarEvents(String day) {
+    public Task<List<CalendarEvent>> extractCalendarEvents(String day) {
         CollectionReference calendarRef = db.collection(CalendarCollection);
-        CalendarEvent calendarEvent = new CalendarEvent();
+        List<CalendarEvent> calendarEventList = new ArrayList<>();
         Query query = calendarRef.whereEqualTo("date", day);
 
         return query.get().continueWith(task -> {
@@ -507,12 +500,14 @@ public void insertNotification(String content, String createdBy, String notifica
                     String end = document.getString("end_time");
                     String room = document.getString("room");
                     String time = start + " - " + end;
-                    calendarEvent.addEvent(name, date, time, room);
+                    CalendarEvent event = new CalendarEvent(name, date, time, room);
+                    calendarEventList.add(event);
                 }
             }
-            return calendarEvent;
+            return calendarEventList;
         });
     }
+
 
     public Task<Void> deleteEvent(String name, String date, String startHour, String endHour, String room) {
         Query query = calendarRef.whereEqualTo("name", name)
@@ -619,89 +614,79 @@ public void insertNotification(String content, String createdBy, String notifica
         });
     }
 
-    public Task<Attendance> retrieveAttendances(String idNumber) {
+    public Task<List<Attendance>> retrieveAttendances(String idNumber) {
         Query query = attendancesRef.whereEqualTo("id_number", idNumber);
 
         return query.get().continueWith(task -> {
-            if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                Attendance attendance = new Attendance();
+            List<Attendance> attendanceList = new ArrayList<>();
+
+            if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String classType = document.getString("class_type");
                     String date = document.getString("date");
-                    attendance.addAttendance(classType, date);
+                    String classType = document.getString("class_type");
+
+                    Attendance attendance = new Attendance();
+                    attendance.setDate(date);
+                    attendance.setClassType(classType);
+
+                    attendanceList.add(attendance);
                 }
-                return attendance;
+                return attendanceList;
             } else {
-                throw new Exception("No attendance records found");
+                throw new Exception("No attendances found: " + task.getException().getMessage());
             }
         });
     }
-    public Task<Attendance> retrieveStudentAttendances() {
+
+    public Task<List<Attendance>> retrieveStudentAttendances() {
         Query query = attendancesRef.orderBy("id_number", Query.Direction.ASCENDING);
 
         return query.get().continueWith(task -> {
-            if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                Attendance attendance = new Attendance();
+            List<Attendance> attendanceList = new ArrayList<>();
+
+            if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String firstName = document.getString("first_name");
                     String lastName = document.getString("last_name");
-                    String name = lastName + " "+ firstName;
+                    String name = lastName + " " + firstName;
                     String idNumber = document.getString("id_number");
                     String classType = document.getString("class_type");
-                    if(classType.equals("curs") || classType.equals("seminar"))
-                    {
+
+                    if (classType.equals("curs") || classType.equals("seminar")) {
+                        Attendance attendance = new Attendance();
                         attendance.addStudentAttendance(name, idNumber, classType);
+                        attendanceList.add(attendance);
                     }
                 }
-                return attendance;
+                return attendanceList;
             } else {
-                throw new Exception("No attendance records found");
+                throw new Exception("Error fetching student attendance records: " + task.getException().getMessage());
             }
         });
     }
-    public Task<Attendance> retrieveAllStudentAttendances() {
+
+    public Task<List<Attendance>> retrieveAllStudentAttendances() {
         Query query = attendancesRef.orderBy("id_number", Query.Direction.ASCENDING);
 
         return query.get().continueWith(task -> {
-            if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                Attendance attendance = new Attendance();
+            List<Attendance> attendanceList = new ArrayList<>();
+
+            if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String firstName = document.getString("first_name");
                     String lastName = document.getString("last_name");
-                    String name = lastName + " "+ firstName;
+                    String name = lastName + " " + firstName;
                     String idNumber = document.getString("id_number");
                     String classType = document.getString("class_type");
                     String date = document.getString("date");
+
+                    Attendance attendance = new Attendance();
                     attendance.addStudentFullAttendance(name, idNumber, classType, date);
-
+                    attendanceList.add(attendance);
                 }
-                return attendance;
+                return attendanceList;
             } else {
-                throw new Exception("No attendance records found");
-            }
-        });
-    }
-    public Task<Attendance> retrieveAllAttendances(String idNumber) {
-        Query query = attendancesRef
-                .whereEqualTo("id_number", idNumber)
-                .orderBy("id_number", Query.Direction.ASCENDING);
-
-        return query.get().continueWith(task -> {
-            if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                Attendance attendance = new Attendance();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    String firstName = document.getString("first_name");
-                    String lastName = document.getString("last_name");
-                    String name = lastName + " "+ firstName;
-                    String id = document.getString("id_number");
-                    String classType = document.getString("class_type");
-                    String date = document.getString("date");
-                    attendance.addStudentFullAttendance(name, id, classType, date);
-
-                }
-                return attendance;
-            } else {
-                throw new Exception("No attendance records found");
+                throw new Exception("Error fetching all student attendance records: " + task.getException().getMessage());
             }
         });
     }
@@ -735,14 +720,16 @@ public void insertNotification(String content, String createdBy, String notifica
             if (task.isSuccessful()) {
                 QuerySnapshot snapshot = task.getResult();
                 if (snapshot != null && !snapshot.isEmpty()) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
                     for (QueryDocumentSnapshot document : snapshot) {
-                        String createdBy = document.getString("created_by");
                         String content = document.getString("content");
                         Timestamp createdAt = document.getTimestamp("created_at");
                         String type = document.getString("type");
-                        notification.addNotification(content, createdAt.toDate().toString(), type);
-
-
+                        if (createdAt != null) {
+                            Date date = createdAt.toDate();
+                            String formattedDate = dateFormat.format(date);
+                            notification.addNotification(content, formattedDate, type);
+                        }
                     }
                 }
             } else {

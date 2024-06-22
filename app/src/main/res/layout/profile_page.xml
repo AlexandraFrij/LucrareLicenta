@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/gradient_background_menu"
     android:id="@+id/profilePage"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ProfilePage">
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/profilePic"
         android:textStyle="italic"
         android:textColor="@color/white"
-        android:textSize="25dp"
+        android:textSize="23dp"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -37,17 +37,7 @@
         app:layout_constraintEnd_toEndOf="@+id/profileName"
         app:layout_constraintTop_toBottomOf="@+id/profileName"
         android:textColor="@color/white"
-        android:textSize="18dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/status"
-        app:layout_constraintStart_toStartOf="@+id/profileEmail"
-        app:layout_constraintEnd_toEndOf="@+id/profileEmail"
-        app:layout_constraintTop_toBottomOf="@+id/profileEmail"
-        android:textColor="@color/white"
-        android:textSize="18dp"
+        android:textSize="16dp"
         />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -68,9 +58,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/logoffBtn"
         android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="@+id/status"
-        app:layout_constraintEnd_toEndOf="@+id/status"
-        app:layout_constraintTop_toBottomOf="@+id/status"
+        app:layout_constraintStart_toStartOf="@+id/profileEmail"
+        app:layout_constraintEnd_toEndOf="@+id/profileEmail"
+        app:layout_constraintTop_toBottomOf="@+id/profileEmail"
         android:text="Deconectare    "
         android:textColor="@color/a1b0c1a"
         android:drawableLeft="@drawable/baseline_logout_24"

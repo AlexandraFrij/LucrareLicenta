@@ -14,6 +14,8 @@ import com.example.licenta.adapter.AttendanceAdapter;
 import com.example.licenta.item.AttendanceRecyclerViewItem;
 import com.example.licenta.item.StudentAttendancesRecyclerViewItem;
 import com.example.licenta.adapter.StudentAttendancesAdapter;
+import com.example.licenta.model.Attendance;
+import com.example.licenta.util.AlertDialogMessages;
 
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -82,7 +84,7 @@ public class StudentAttendances extends AppCompatActivity {
             }
 
         });
-        }
+    }
 
 
 
@@ -93,12 +95,10 @@ public class StudentAttendances extends AppCompatActivity {
                 .addOnSuccessListener(items -> {
                     if(items != null)
                     {
-                        List<String> name = items.getName();
-                        List<String> date = items.getDate();
                         List<AttendanceRecyclerViewItem> attendances = new ArrayList<>();
-                        for(int i = 0; i< name.size(); i++)
+                        for( Attendance attendance : items)
                         {
-                            attendances.add(new AttendanceRecyclerViewItem(name.get(i), date.get(i)));
+                            attendances.add(new AttendanceRecyclerViewItem(attendance.getClassType(), attendance.getDate()));
                         }
                         attendanceRecyclerView.setLayoutManager(new LinearLayoutManager(StudentAttendances.this));
                         attendanceRecyclerView.setAdapter(new AttendanceAdapter(getApplicationContext(), attendances));
@@ -116,17 +116,13 @@ public class StudentAttendances extends AppCompatActivity {
         dbHelper.retrieveStudentAttendances()
                 .addOnSuccessListener(items -> {
                     if (items != null) {
-                        List<String> name = items.getName();
-                        List<String> ids = items.getIdNumber();
-                        List<String> classType = items.getClassType();
-                        List<String> dates = items.getDate();
 
-                        for (int i = 0; i < name.size(); i++) {
-                            String id = ids.get(i);
+                        for (Attendance attendance: items) {
+                            String id = attendance.getIdNumber();
                             if (!nameHashMap.containsKey(id)) {
-                                nameHashMap.put(id, name.get(i));
+                                nameHashMap.put(id, attendance.getName());
                             }
-                            if (classType.get(i).equalsIgnoreCase("curs")) {
+                            if (attendance.getClassType().equalsIgnoreCase("curs")) {
                                 courseAttendancesHashMap.put(id, courseAttendancesHashMap.getOrDefault(id, 0) + 1);
                             } else {
                                 seminarAttendancesHashMap.put(id, seminarAttendancesHashMap.getOrDefault(id, 0) + 1);
@@ -148,19 +144,6 @@ public class StudentAttendances extends AppCompatActivity {
                 });
     }
 
-    private void show(List<String> ids, HashMap<String, String> names,
-                      HashMap<String, Integer> course, HashMap<String, Integer> seminar) {
-        attendanceRecyclerView = findViewById(R.id.attendances_viewer);
-        List<StudentAttendancesRecyclerViewItem> attendances = new ArrayList<>();
-        for (String id : ids) {
-            String name = names.get(id);
-            int courseAttendances = course.getOrDefault(id, 0);
-            int seminarAttendances = seminar.getOrDefault(id, 0);
-            attendances.add(new StudentAttendancesRecyclerViewItem(name, id, courseAttendances, seminarAttendances));
-        }
-        attendanceRecyclerView.setLayoutManager(new LinearLayoutManager(StudentAttendances.this));
-        attendanceRecyclerView.setAdapter(new StudentAttendancesAdapter(getApplicationContext(), attendances));
-    }
     public void prepareAndDownloadDataForProf() {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = hssfWorkbook.createSheet("Attendances");
@@ -175,24 +158,20 @@ public class StudentAttendances extends AppCompatActivity {
 
         dbHelper.retrieveAllStudentAttendances().addOnSuccessListener(items -> {
             if (items != null) {
-                List<String> name = items.getName();
-                List<String> ids = items.getIdNumber();
-                List<String> classType = items.getClassType();
-                List<String> date = items.getDate();
-                for (int i = 0; i < name.size(); i++) {
+                for (Attendance attendance : items) {
                     HSSFRow dataRow = hssfSheet.createRow(rowIndex[0]++);
 
                     HSSFCell idCell = dataRow.createCell(0);
-                    idCell.setCellValue(ids.get(i));
+                    idCell.setCellValue(attendance.getIdNumber());
 
                     HSSFCell nameCell = dataRow.createCell(1);
-                    nameCell.setCellValue(name.get(i));
+                    nameCell.setCellValue(attendance.getName());
 
                     HSSFCell classTypeCell = dataRow.createCell(2);
-                    classTypeCell.setCellValue(classType.get(i));
+                    classTypeCell.setCellValue(attendance.getClassType());
 
                     HSSFCell dateCell = dataRow.createCell(3);
-                    dateCell.setCellValue(date.get(i));
+                    dateCell.setCellValue(attendance.getDate());
                 }
                 saveWorkbook(hssfWorkbook);
             }
@@ -204,7 +183,7 @@ public class StudentAttendances extends AppCompatActivity {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = hssfWorkbook.createSheet("Attendances");
         HSSFRow hssfRow = hssfSheet.createRow(0);
-        String[] columns = {"Numar matricol", "Nume student", "Eveniment", "Data"};
+        String[] columns = {"Eveniment", "Data"};
         final int[] rowIndex = {1};
 
         for (int i = 0; i < columns.length; i++) {
@@ -212,26 +191,17 @@ public class StudentAttendances extends AppCompatActivity {
             hssfCell.setCellValue(columns[i]);
         }
 
-        dbHelper.retrieveAllAttendances(idNumber).addOnSuccessListener(items -> {
+        dbHelper.retrieveAttendances(idNumber).addOnSuccessListener(items -> {
             if (items != null) {
-                List<String> name = items.getName();
-                List<String> ids = items.getIdNumber();
-                List<String> classType = items.getClassType();
-                List<String> date = items.getDate();
-                for (int i = 0; i < name.size(); i++) {
+
+                for (Attendance attendance : items) {
                     HSSFRow dataRow = hssfSheet.createRow(rowIndex[0]++);
 
-                    HSSFCell idCell = dataRow.createCell(0);
-                    idCell.setCellValue(ids.get(i));
+                    HSSFCell classTypeCell = dataRow.createCell(0);
+                    classTypeCell.setCellValue(attendance.getClassType());
 
-                    HSSFCell nameCell = dataRow.createCell(1);
-                    nameCell.setCellValue(name.get(i));
-
-                    HSSFCell classTypeCell = dataRow.createCell(2);
-                    classTypeCell.setCellValue(classType.get(i));
-
-                    HSSFCell dateCell = dataRow.createCell(3);
-                    dateCell.setCellValue(date.get(i));
+                    HSSFCell dateCell = dataRow.createCell(1);
+                    dateCell.setCellValue(attendance.getDate());
                 }
                 saveWorkbook(hssfWorkbook);
             }
@@ -255,4 +225,3 @@ public class StudentAttendances extends AppCompatActivity {
     }
 
 }
-

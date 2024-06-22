@@ -68,8 +68,8 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventsHol
                     } else {
                         holder.attendanceButton.setVisibility(View.GONE);
                         dbHelper.userAddedEvent(currentUser, name, date, time)
-                                .addOnSuccessListener(b -> {
-                                    if (b && dateAfterToday(date))
+                                .addOnSuccessListener(task -> {
+                                    if (task && dateAfterToday(date))
                                     {
                                         holder.deleteButton.setEnabled(true);
                                         holder.deleteButton.setAlpha(1.0f);

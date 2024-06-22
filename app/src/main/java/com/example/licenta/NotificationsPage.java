@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.licenta.adapter.NotificationAdapter;
 import com.example.licenta.item.NotificationRecyclerViewItem;
+import com.example.licenta.util.AlertDialogMessages;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;

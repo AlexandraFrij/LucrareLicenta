@@ -4,39 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CalendarEvent {
-    List<String> name;
-    List<String> date;
-    List<String> time;
-    List<String> room;
+    String name,date,time, room;
 
-    public CalendarEvent() {
-        name = new ArrayList<String>();
-        date = new ArrayList<String>();
-        time = new ArrayList<String>();
-        room = new ArrayList<String>();
+    public CalendarEvent(String name, String date, String time, String room)
+    {
+        this.name = name;
+        this.date = date;
+        this.time = time;
+        this.room = room;
     }
 
-    public List<String> getName() {
+    public String getName() {
         return name;
     }
 
-    public List<String> getDate() {
+    public String getDate() {
         return date;
     }
 
-    public List<String> getTime() {
+    public String getTime() {
         return time;
     }
 
-    public List<String> getRoom() {
+    public String getRoom() {
         return room;
     }
 
-    public void addEvent(String name, String date, String time, String room)
-    {
-        this.name.add(name);
-        this.date.add(date);
-        this.time.add(time);
-        this.room.add(room);
-    }
+
 }

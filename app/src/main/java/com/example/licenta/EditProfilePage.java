@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.licenta.util.AlertDialogMessages;
 import com.example.licenta.util.AndroidUtil;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 
@@ -116,14 +117,14 @@ public class EditProfilePage extends AppCompatActivity
                         dbHelper.getProfilePicture(oldEmail).putFile(selectedImage)
                                 .addOnCompleteListener( task ->
                                 {
-                                    updateData(lastName, firstName, info[0], newEmail, oldEmail, sp);
+                                    updateData(lastName, firstName, newEmail, oldEmail, sp);
                                     String message = "Date salvate!";
                                     showSuccess(message);
 
                                 });
                     }
                     else {
-                        updateData(lastName, firstName, info[0], newEmail, oldEmail, sp);
+                        updateData(lastName, firstName, newEmail, oldEmail, sp);
                         String message = "Date salvate!";
                         showSuccess(message);
                     }
@@ -157,7 +158,7 @@ public class EditProfilePage extends AppCompatActivity
         changePhotoBtn.setOnClickListener(buttonClickListener);
     }
 
-    private void updateData(String lastname, String firstname, String password, String newEmail, String oldEmail, SharedPreferences sp)
+    private void updateData(String lastname, String firstname, String newEmail, String oldEmail, SharedPreferences sp)
     {
         if (! lastname.isEmpty())
             dbHelper.updateLastName(lastname, oldEmail);

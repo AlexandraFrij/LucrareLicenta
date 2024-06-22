@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.example.licenta.adapter.SearchUserAdapter;
 import com.example.licenta.item.SearchUserRecyclerViewItem;
+import com.example.licenta.util.AlertDialogMessages;
 
 
 import java.util.ArrayList;
@@ -42,11 +43,7 @@ public class SearchUser extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String usernamePattern = usernameEdit.getText().toString().trim();
-                if (usernamePattern.length() < 3) {
-                    usernameEdit.setError("Utilizatorul nu exista");
-                } else {
-                    searchUser(usernamePattern);
-                }
+                searchUser(usernamePattern);
             }
         });
     }
@@ -55,7 +52,7 @@ public class SearchUser extends AppCompatActivity {
         RecyclerView usersView = findViewById(R.id.user_viewer);
         dbHelper.extractUsername(pattern)
                 .addOnSuccessListener(user -> {
-                    if (user != null) {
+                    if (user != null ) {
                         List<String> usernames = user.getUsernames();
                         List<String> emails = user.getEmails();
                         List<SearchUserRecyclerViewItem> users = new ArrayList<>();
@@ -63,9 +60,17 @@ public class SearchUser extends AppCompatActivity {
                             if(usernames.get(i).toLowerCase().contains(pattern))
                                 users.add(new SearchUserRecyclerViewItem(usernames.get(i), R.drawable.profile_pic, emails.get(i)));
                         }
-                        usersView.setLayoutManager(new LinearLayoutManager(SearchUser.this));
-                        usersView.setAdapter(new SearchUserAdapter(getApplicationContext(), users));
+                        if(! users.isEmpty())
+                        {
+                            usersView.setLayoutManager(new LinearLayoutManager(SearchUser.this));
+                            usersView.setAdapter(new SearchUserAdapter(getApplicationContext(), users));
+                        }
+                        else {
+                            AlertDialogMessages alertDialogMessages = new AlertDialogMessages();
+                            alertDialogMessages.showErrorDialog(SearchUser.this, "Niciun utilizator gasit!");
+                        }
                     }
+
                 });
 
     }

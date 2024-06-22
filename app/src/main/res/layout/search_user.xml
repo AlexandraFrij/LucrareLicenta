@@ -9,12 +9,12 @@
     android:id="@+id/searchUserPage"
     tools:context=".SearchUser">
 
-
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@id/goBackBtn"
         android:text="."
+        android:textColor="@color/a1b0c1a"
         android:drawableLeft="@drawable/baseline_arrow_back_ios_24"
         android:background="@android:color/transparent"
         android:drawableTint="@color/white"
@@ -26,12 +26,13 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/search_view"
-        android:text="         Cautare utilizator"
+        android:text="Cautare utilizator"
         android:textSize="25dp"
         android:textStyle="bold|italic"
         android:textColor="@color/fadcd5"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
+        android:layout_marginLeft="55dp"
 
         android:layout_toEndOf="@+id/goBackBtn"
         />
