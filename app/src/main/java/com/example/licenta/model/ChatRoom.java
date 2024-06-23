@@ -27,12 +27,17 @@ public class ChatRoom {
     }
     public void addChatRoom(String userEmail, String otherUserEmail, String id)
     {
-        if(!this.otherUserEmail.contains(otherUserEmail))
+        if(!userEmail.equals(otherUserEmail) )
         {
             this.otherUserEmail.add(otherUserEmail);
             this.userEmail.add(userEmail);
             this.chatRoomId.add(id);
-
+        }
+        else if(!this.otherUserEmail.contains(otherUserEmail))
+        {
+            this.otherUserEmail.add(otherUserEmail);
+            this.userEmail.add(userEmail);
+            this.chatRoomId.add(id);
         }
     }
 }
