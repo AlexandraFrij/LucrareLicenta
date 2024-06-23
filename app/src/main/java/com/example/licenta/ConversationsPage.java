@@ -99,8 +99,9 @@ public class ConversationsPage extends AppCompatActivity {
                                                         String username = userInfo[0] + " " + userInfo[1];
                                                         String recentMessageContent = recentMessage[0];
                                                         String recentMessageTime = recentMessage[1];
-                                                        items.add(new RecentChatsRecyclerViewItem(username, recentMessageContent, otherUserEmail, R.drawable.profile_pic, recentMessageTime));
-
+                                                        RecentChatsRecyclerViewItem recentChatsRecyclerViewItemChat = new RecentChatsRecyclerViewItem(username, recentMessageContent, otherUserEmail, R.drawable.profile_pic, recentMessageTime);
+                                                        if(! items.contains(recentChatsRecyclerViewItemChat))
+                                                            items.add(recentChatsRecyclerViewItemChat);
                                                         if (items.size() == chatRoomIds.size()) {
                                                             recentChats.setLayoutManager(new LinearLayoutManager(ConversationsPage.this));
                                                             recentChats.setAdapter(new RecentChatsAdapter(getApplicationContext(), items));

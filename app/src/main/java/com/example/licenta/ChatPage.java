@@ -97,7 +97,11 @@ public class ChatPage extends AppCompatActivity {
     }
 
     public void createChatRoom(String user1Email, String user2Email) {
-        dbHelper.insertChatRoom(user1Email, user2Email);
+        dbHelper.chatRoomExists(user1Email, user2Email)
+                        .addOnSuccessListener( task ->{
+                            if(!task)
+                                dbHelper.insertChatRoom(user1Email, user2Email);
+                        });
     }
 
     public void sendMessage(String message, String senderEmail, String receiverEmail) {

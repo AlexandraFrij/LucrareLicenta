@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/notificationMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="80dp"
         android:text="Notification message"
@@ -28,7 +28,7 @@
         />
 
         <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="added at 12:33 2024-060-04"
         android:textSize="13dp"

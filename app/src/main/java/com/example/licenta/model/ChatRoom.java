@@ -27,9 +27,12 @@ public class ChatRoom {
     }
     public void addChatRoom(String userEmail, String otherUserEmail, String id)
     {
-        this.otherUserEmail.add(otherUserEmail);
-        this.userEmail.add(userEmail);
-        this.chatRoomId.add(id);
+        if(!this.otherUserEmail.contains(otherUserEmail))
+        {
+            this.otherUserEmail.add(otherUserEmail);
+            this.userEmail.add(userEmail);
+            this.chatRoomId.add(id);
 
+        }
     }
 }
